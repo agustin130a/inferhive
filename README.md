@@ -1,6 +1,6 @@
 # InferHive — Propuesta de Tesis
 
-Plataforma comunitaria de cómputo GPU compartido sobre Kubernetes, con planificación consciente de reservas y créditos por uso medido.
+Préstamo federado de GPUs de consumo para cargas de LLM: planificación consciente de VRAM y de reservas, tolerancia a interrupciones y economía de créditos con medición verificable.
 
 🌐 **Sitio publicado:** [https://agustin130a.github.io/inferhive/](https://agustin130a.github.io/inferhive/)
 
