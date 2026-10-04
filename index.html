@@ -659,7 +659,7 @@ img {
     <h2 id="resumen">1. Resumen</h2>
     <p>
       <strong>InferHive</strong> es una plataforma donde una comunidad presta GPUs de consumo para cargas de LLM. Un único cluster
-      <strong>k3s híbrido</strong> une nodos chicos en la nube con GPUs ubicadas en casas, conectados por una red privada sin puertos
+      <strong>k3s on-premise</strong>, alojado en el laboratorio LICDIA, suma GPUs ubicadas en casas, conectadas por una red privada sin puertos
       abiertos. Quien usa la plataforma (alumnos, investigadores) llama a un LLM con una API compatible con OpenAI, alquila una GPU
       al momento, reserva una franja o trabaja con <code>kubectl</code> en un espacio propio. Quien presta una GPU cobra por el uso medido.
     </p>
@@ -711,7 +711,7 @@ img {
         <div class="g-track"></div>
         <div class="g-bar bar-research" style="grid-column:2 / 4">Diseño + API</div>
 
-        <div class="g-label">Cluster k3s híbrido, red y acceso</div>
+        <div class="g-label">Cluster k3s on-premise, red y acceso</div>
         <div class="g-track"></div>
         <div class="g-bar bar-k8s" style="grid-column:3 / 4">k3s · Tailscale · Cloudflare</div>
 
@@ -764,8 +764,8 @@ img {
         </tr>
         <tr>
           <td><strong>M2</strong></td>
-          <td>Cluster híbrido + portal + ledger</td>
-          <td>Cluster k3s con nodos en la nube y una GPU en casa unidos por Tailscale; entrada única por Cloudflare Tunnel con Access; portal FastAPI + Postgres; ledger encadenado y firmado con su comando de verificación.</td>
+          <td>Cluster on-premise + portal + ledger</td>
+          <td>Cluster k3s on-premise en LICDIA y una GPU en casa unidos por Tailscale; entrada única por Cloudflare Tunnel con Access; portal FastAPI + Postgres; ledger encadenado y firmado con su comando de verificación.</td>
         </tr>
         <tr>
           <td><strong>M3</strong></td>
@@ -850,11 +850,11 @@ img {
 
     <h3 id="objetivos">4.3 Objetivos</h3>
     <p><strong>Objetivo general.</strong> Diseñar, implementar y evaluar un MVP de una plataforma de préstamo federado de GPUs de consumo
-      para cargas de LLM sobre un cluster k3s híbrido, con un planificador de tres tiers, medición verificable y una economía de créditos
+      para cargas de LLM sobre un cluster k3s on-premise, con un planificador de tres tiers, medición verificable y una economía de créditos
       sin valor monetario.</p>
     <p><strong>Objetivos específicos:</strong></p>
     <ol>
-      <li>Construir un cluster <strong>k3s híbrido</strong> que una nodos en la nube con GPUs en casas, sin puertos abiertos.</li>
+      <li>Construir un cluster <strong>k3s on-premise</strong> en LICDIA al que se sumen GPUs en casas, sin puertos abiertos.</li>
       <li>Ofrecer cuatro <strong>formas de uso</strong>: API de LLM compatible con OpenAI, alquiler al momento, reservas por franja y <code>kubectl</code> en un espacio propio.</li>
       <li>Permitir que terceros <strong>sumen su GPU</strong> con cuarentena y calificación previas.</li>
       <li>Diseñar e implementar un <strong>planificador de tres tiers</strong> que conozca VRAM, franjas y regreso del dueño, con tolerancia a interrupciones.</li>
@@ -865,7 +865,7 @@ img {
 
     <h3 id="contribucion">4.4 Contribuciones esperadas</h3>
     <ul>
-      <li>Arquitectura de referencia de un cluster k3s híbrido entre la nube y hogares.</li>
+      <li>Arquitectura de referencia de un cluster k3s on-premise extendido con GPUs en hogares.</li>
       <li>Planificador con tres tiers: reserva exclusiva, inferencia compartida e interrumpible.</li>
       <li>Tolerancia a interrupciones para cargas que ceden la GPU.</li>
       <li>La economía del PC con análisis de equidad.</li>
@@ -919,14 +919,14 @@ img {
 
     <h3 id="arquitectura">5.2 Arquitectura</h3>
     <p>
-      Un solo cluster <a href="https://docs.k3s.io/" target="_blank" rel="noopener">k3s</a> une nodos chicos en la nube con las GPUs en casas.
+      Un solo cluster <a href="https://docs.k3s.io/" target="_blank" rel="noopener">k3s</a> on-premise, alojado en el laboratorio LICDIA, suma las GPUs ubicadas en casas.
       Los nodos hablan entre sí por <a href="https://tailscale.com/kb/1151/what-is-tailscale" target="_blank" rel="noopener">Tailscale</a>
       (flannel sobre la interfaz de Tailscale y ACL por tags), así que ninguna casa necesita puertos abiertos. Todo el tráfico de usuarios entra por un único
       <a href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/" target="_blank" rel="noopener">Cloudflare Tunnel</a>,
       con <a href="https://developers.cloudflare.com/cloudflare-one/policies/access/" target="_blank" rel="noopener">Cloudflare Access</a> delante del portal y de la API de Kubernetes.
     </p>
     <div class="arch-diagram">
-      <svg viewBox="0 0 760 380" role="img" aria-label="Arquitectura de InferHive: entrada por Cloudflare, nodos en la nube y GPUs en casas unidos por Tailscale en un cluster k3s" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 760 380" role="img" aria-label="Arquitectura de InferHive: entrada por Cloudflare, nodos on-premise en LICDIA y GPUs en casas unidos por Tailscale en un cluster k3s" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <marker id="arrow" markerWidth="10" markerHeight="10" refX="6.5" refY="3" orient="auto" markerUnits="strokeWidth">
             <path d="M0,0 L7,3 L0,6 Z" class="arc-head"/>
@@ -942,7 +942,7 @@ img {
         <text class="arc-lbl" x="212" y="134">tunnel</text>
 
         <rect class="arc-box" x="40" y="158" width="320" height="206" rx="10"/>
-        <text class="arc-title" x="60" y="184">NODOS EN LA NUBE</text>
+        <text class="arc-title" x="60" y="184">NODOS ON-PREMISE — LICDIA</text>
         <text class="arc-line"  x="60" y="210">Control plane de k3s</text>
         <text class="arc-line"  x="60" y="232">Portal FastAPI · Postgres (ledger PC)</text>
         <text class="arc-line"  x="60" y="254">Gateway LLM (cuenta tokens)</text>
@@ -1075,7 +1075,6 @@ img {
         <tr><td>Admisión en CEL</td><td>Políticas <a href="https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/" target="_blank" rel="noopener">ValidatingAdmissionPolicy</a> y <a href="https://kubernetes.io/docs/reference/access-authn-authz/mutating-admission-policy/" target="_blank" rel="noopener">MutatingAdmissionPolicy</a>: inyectan pool, tolerancias y <code>securityContext</code>; rechazan <code>nodeName</code>, afinidades, tolerancias ajenas, host namespaces, <code>hostPath</code> y tokens eternos.</td></tr>
         <tr><td>Cuotas</td><td>Por inquilino: 500m de CPU y 256 Mi de memoria en requests, 6 pods, 1 PVC, sin LoadBalancer; cuota de GPU en 0 fuera de su ventana.</td></tr>
         <tr><td>Salida a internet</td><td>Solo DNS, el propio espacio y el proxy <a href="https://www.squid-cache.org/" target="_blank" rel="noopener">Squid</a> a 80/443 públicos; excepciones aprobadas una por una.</td></tr>
-        <tr><td>Metadata de la nube</td><td>Bloqueo de 169.254.169.254 en cada nodo de la nube.</td></tr>
         <tr><td>API server</td><td><a href="https://kubernetes.io/docs/concepts/cluster-administration/flow-control/" target="_blank" rel="noopener">Prioridad y equidad (APF)</a> para que los inquilinos no saturen el control plane.</td></tr>
         <tr><td>Acceso a la GPU</td><td>El NVIDIA Container Toolkit debe ignorar <code>NVIDIA_VISIBLE_DEVICES</code> en contenedores sin privilegios (versión 1.17.8 o mayor), para que un contenedor sin GPU asignada no pueda verla.</td></tr>
         <tr><td>Privacidad del prompt</td><td>En nodos de la comunidad el dueño puede leer los prompts; el cliente lo prohíbe con el header <code>x-inferhive-private: true</code>.</td></tr>
@@ -1086,7 +1085,7 @@ img {
     <table>
       <thead><tr><th>Capa</th><th>Tecnología</th></tr></thead>
       <tbody>
-        <tr><td>Cluster</td><td>k3s (nodos en la nube + GPUs en casas)</td></tr>
+        <tr><td>Cluster</td><td>k3s on-premise en LICDIA + GPUs en casas</td></tr>
         <tr><td>Red</td><td>Tailscale (flannel sobre la interfaz de Tailscale, ACL por tags)</td></tr>
         <tr><td>Entrada e identidad</td><td>Cloudflare Tunnel + Cloudflare Access (OTP por mail, JWT RS256)</td></tr>
         <tr><td>Portal y API</td><td>FastAPI (<code>/api/v1</code>) · Postgres 17 con migraciones</td></tr>
