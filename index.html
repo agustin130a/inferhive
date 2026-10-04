@@ -625,22 +625,22 @@ img {
           <li><a href="#problema">4.1 Problema y motivación</a></li>
           <li><a href="#antecedentes">4.2 Antecedentes</a></li>
           <li><a href="#objetivos">4.3 Objetivos</a></li>
-          <li><a href="#contribucion">4.4 Contribución de ingeniería</a></li>
+          <li><a href="#contribucion">4.4 Contribuciones esperadas</a></li>
           <li><a href="#alcance">4.5 Alcance: MVP vs Versión Completa</a></li>
-          <li><a href="#hipotesis">4.6 Hipótesis falsables</a></li>
+          <li><a href="#hipotesis">4.6 Preguntas e hipótesis</a></li>
         </ul>
       </li>
       <li><a href="#detalles">5. Detalles de la propuesta</a>
         <ul>
-          <li><a href="#arquitectura">5.1 Arquitectura — tres planos</a></li>
-          <li><a href="#modos">5.2 Modos de uso</a></li>
-          <li><a href="#proveedores">5.3 Proveedores y red privada</a></li>
-          <li><a href="#planificador">5.4 Planificador consciente</a></li>
-          <li><a href="#verificacion">5.5 Verificación de nodos</a></li>
-          <li><a href="#creditos">5.6 Créditos y libro firmado</a></li>
-          <li><a href="#aislamiento">5.7 Aislamiento y datos</a></li>
+          <li><a href="#actores">5.1 Actores</a></li>
+          <li><a href="#arquitectura">5.2 Arquitectura</a></li>
+          <li><a href="#recorridos">5.3 Recorridos principales</a></li>
+          <li><a href="#planificador">5.4 Planificador (línea principal)</a></li>
+          <li><a href="#medicion">5.5 Medición y verificación</a></li>
+          <li><a href="#creditos">5.6 Créditos y libro contable</a></li>
+          <li><a href="#seguridad">5.7 Seguridad y aislamiento</a></li>
           <li><a href="#stack">5.8 Stack técnico</a></li>
-          <li><a href="#metodologia">5.9 Metodología y benchmark</a></li>
+          <li><a href="#metodologia">5.9 Metodología</a></li>
         </ul>
       </li>
       <li><a href="#escalado">6. Camino de escalado a la Versión Completa</a></li>
@@ -649,7 +649,7 @@ img {
   </aside>
 
   <article class="content">
-    <h1>InferHive: plataforma comunitaria de cómputo GPU compartido sobre Kubernetes, con planificación consciente de reservas y créditos por uso medido</h1>
+    <h1>InferHive: préstamo federado de GPUs de consumo para cargas de LLM — planificación consciente de VRAM y de reservas, tolerancia a interrupciones y economía de créditos con medición verificable</h1>
     <p class="doc-subtitle">
       <strong>Propuesta de Trabajo Final de Grado</strong> · Ingeniería en Computación · FCEFyN, Universidad Nacional de Córdoba.<br>
       Tesista: Alex A. Hernando · Director: Dr. David Petrocelli · Co-director: Ing. Danilo Paez · 2026 · MVP realizable en 6 meses.
@@ -658,24 +658,22 @@ img {
     <!-- ===================== 1. RESUMEN ===================== -->
     <h2 id="resumen">1. Resumen</h2>
     <p>
-      <strong>InferHive</strong> es una plataforma donde una comunidad comparte capacidad de cómputo GPU. Quien aporta una GPU
-      ociosa gana <strong>créditos de procesamiento</strong> (PC); quien necesita potencia los gasta para abrir una sesión con
-      herramientas listas, reservar una GPU exclusiva por un horario o trabajar en un <em>namespace</em> aislado de Kubernetes.
-      No circula dinero: los créditos no se compran, no se transfieren entre cuentas y no tienen valor monetario.
+      <strong>InferHive</strong> es una plataforma donde una comunidad presta GPUs de consumo para cargas de LLM. Un único cluster
+      <strong>k3s híbrido</strong> une nodos chicos en la nube con GPUs ubicadas en casas, conectados por una red privada sin puertos
+      abiertos. Quien usa la plataforma (alumnos, investigadores) llama a un LLM con una API compatible con OpenAI, alquila una GPU
+      al momento, reserva una franja o trabaja con <code>kubectl</code> en un espacio propio. Quien presta una GPU cobra por el uso medido.
     </p>
     <p>
-      La tesis plantea construir la plataforma <strong>desde cero</strong> sobre Kubernetes. El aporte central es un
-      <strong>planificador consciente</strong> de la memoria de cada GPU, de las reservas por calendario y de la disponibilidad
-      intermitente de los equipos de la comunidad, que pueden volver a manos de su dueño en cualquier momento. Lo acompañan
-      dos líneas secundarias: la <strong>verificación de nodos no confiables</strong> (cuarentena, cargas sonda y contraste de métricas)
-      y una <strong>economía de créditos</strong> registrada en un libro encadenado y firmado, con reglas contra el abuso.
+      Todo se paga con <strong>processing coins (PC)</strong>: un crédito de cómputo <strong>sin valor monetario</strong> que no se compra ni cotiza,
+      registrado en un libro <em>append-only</em>, encadenado y firmado. La tesis plantea construir la plataforma desde cero y centra la
+      investigación en un <strong>planificador con tres tiers</strong> (reserva exclusiva, inferencia compartida e interrumpible) que conozca la
+      VRAM, las franjas reservadas y el regreso del dueño. Como líneas secundarias estudia la <strong>medición verificable</strong> frente a un dueño
+      deshonesto y la <strong>equidad de la economía de créditos</strong>.
     </p>
     <p>
-      El MVP, realizable en <strong>seis meses</strong> (el primero dedicado a investigación), incluye GPU propias de la plataforma y
-      GPU de la comunidad unidas por red privada, y deja preparado el camino hacia una API de inferencia compatible con OpenAI y hacia workers
-      en cualquier dispositivo. La evaluación combina <strong>simulación con trazas</strong> de clusters GPU reales y validación
-      sobre un cluster físico, frente a un planificador de referencia, con <strong>hipótesis falsables</strong> sobre violaciones de
-      reserva, utilización, trabajo perdido por desalojo, detección de nodos deshonestos e integridad del libro de créditos.
+      La propuesta continúa el trabajo futuro de la tesis doctoral del director (UNLP, 2021). El MVP se realiza en
+      <strong>seis meses</strong>, con el primero dedicado a investigación, y se evalúa con hipótesis falsables sobre utilización, reservas violadas,
+      equidad, trabajo perdido por interrupciones y detección de mediciones infladas.
     </p>
 
     <hr>
@@ -683,18 +681,16 @@ img {
     <!-- ===================== 2. GANTT ===================== -->
     <h2 id="gantt">2. Diagrama Gantt (6 meses)</h2>
     <p>
-      Planificación de alto nivel por área de trabajo. Las barras muestran la duración y el solapamiento entre líneas
-      (la documentación es transversal). El detalle de hitos y entregables verificables está en el
-      <a href="#cronograma">cronograma</a>.
+      Planificación de alto nivel por área de trabajo. El detalle de hitos y entregables está en el <a href="#cronograma">cronograma</a>.
     </p>
 
     <div class="gantt-legend">
       <span><i class="bar-research"></i> Investigación / diseño</span>
       <span><i class="bar-plane"></i> Plataforma base</span>
-      <span><i class="bar-k8s"></i> Cómputo y red</span>
+      <span><i class="bar-k8s"></i> Cluster y nodos</span>
       <span><i class="bar-sched"></i> Planificador</span>
-      <span><i class="bar-trust"></i> Verificación + créditos</span>
-      <span><i class="bar-write"></i> Benchmark + escritura</span>
+      <span><i class="bar-trust"></i> Medición + créditos</span>
+      <span><i class="bar-write"></i> Experimentos + escritura</span>
     </div>
 
     <div class="gantt-wrap">
@@ -709,39 +705,43 @@ img {
 
         <div class="g-label">Investigación y estado del arte</div>
         <div class="g-track"></div>
-        <div class="g-bar bar-research" style="grid-column:2 / 3">Estado del arte + trazas</div>
+        <div class="g-bar bar-research" style="grid-column:2 / 3">Estado del arte</div>
 
         <div class="g-label">Diseño de arquitectura y modelo de datos</div>
         <div class="g-track"></div>
-        <div class="g-bar bar-research" style="grid-column:2 / 4">Spec + schema + API</div>
+        <div class="g-bar bar-research" style="grid-column:2 / 4">Diseño + API</div>
 
-        <div class="g-label">Control plane, portal y autenticación</div>
+        <div class="g-label">Cluster k3s híbrido, red y acceso</div>
         <div class="g-track"></div>
-        <div class="g-bar bar-plane" style="grid-column:3 / 5">FastAPI · RLS · OIDC · portal</div>
+        <div class="g-bar bar-k8s" style="grid-column:3 / 4">k3s · Tailscale · Cloudflare</div>
 
-        <div class="g-label">Cluster K8s, sesiones y namespaces</div>
+        <div class="g-label">Portal, gateway LLM y ledger</div>
         <div class="g-track"></div>
-        <div class="g-bar bar-k8s" style="grid-column:3 / 5">k3s · GPU · plantillas · cuotas</div>
+        <div class="g-bar bar-plane" style="grid-column:3 / 5">Portal · llmgw · vLLM · ledger</div>
 
-        <div class="g-label">GPU de la comunidad (red privada)</div>
+        <div class="g-label">Reservas, alquiler y kubectl</div>
         <div class="g-track"></div>
-        <div class="g-bar bar-k8s" style="grid-column:4 / 5">Alta · cuarentena</div>
+        <div class="g-bar bar-plane" style="grid-column:4 / 5">Reconciliador · proxy · cuotas</div>
 
-        <div class="g-label">Planificador: simulador + plugin + reservas</div>
+        <div class="g-label">Alta de GPUs de la comunidad</div>
         <div class="g-track"></div>
-        <div class="g-bar bar-sched" style="grid-column:4 / 7">Simulador · plugin · reservas · desalojo</div>
+        <div class="g-bar bar-k8s" style="grid-column:4 / 6">join-broker · calificador</div>
 
-        <div class="g-label">Libro de créditos y verificación</div>
+        <div class="g-label">Planificador de tres tiers</div>
         <div class="g-track"></div>
-        <div class="g-bar bar-trust" style="grid-column:4 / 7">Libro firmado · sondas · medición</div>
+        <div class="g-bar bar-sched" style="grid-column:4 / 7">Trazas · planificador · interrupción</div>
 
-        <div class="g-label">Benchmark, amenazas y escritura</div>
+        <div class="g-label">Medición verificable y economía</div>
         <div class="g-track"></div>
-        <div class="g-bar bar-write" style="grid-column:6 / 8">Métricas · tesis · defensa</div>
+        <div class="g-bar bar-trust" style="grid-column:5 / 7">DCGM cruzado · simulación</div>
+
+        <div class="g-label">Experimentos, amenazas y escritura</div>
+        <div class="g-track"></div>
+        <div class="g-bar bar-write" style="grid-column:6 / 8">Experimentos · tesis · defensa</div>
 
         <div class="g-label">Documentación (transversal)</div>
         <div class="g-track"></div>
-        <div class="g-bar bar-write" style="grid-column:3 / 8; opacity:.55">Bitácora y docs continuas</div>
+        <div class="g-bar bar-write" style="grid-column:3 / 8; opacity:.55">Bitácora y runbook</div>
       </div>
     </div>
 
@@ -750,9 +750,7 @@ img {
     <!-- ===================== 3. CRONOGRAMA ===================== -->
     <h2 id="cronograma">3. Cronograma de la tesis</h2>
     <p>
-      Cada mes cierra con un <strong>entregable verificable</strong>: un artefacto que el director puede revisar y, en su
-      mayoría, ejecutar. El primer mes es de investigación y diseño formal; los cinco restantes construyen el MVP en
-      <em>vertical slices</em> que funcionan de punta a punta.
+      Cada mes cierra con un <strong>entregable verificable</strong> que el director puede revisar y, en su mayoría, ejecutar.
     </p>
     <table>
       <thead>
@@ -761,38 +759,38 @@ img {
       <tbody>
         <tr>
           <td><strong>M1</strong></td>
-          <td>Investigación + diseño formal</td>
-          <td>Documento de diseño: estado del arte (planificación de GPU, cómputo voluntario, verificación y registros a prueba de manipulación), selección y preprocesamiento de las trazas públicas, modelo de datos, borrador de la API (OpenAPI) y definición del planificador de referencia.</td>
+          <td>Investigación + diseño</td>
+          <td>Estado del arte (sección 4.2), arquitectura de referencia, modelo de datos, API del portal, parámetros iniciales de la economía y diseño de los experimentos.</td>
         </tr>
         <tr>
           <td><strong>M2</strong></td>
-          <td>Control plane + cluster base</td>
-          <td>FastAPI + Postgres con <strong>RLS</strong>; registro e inicio de sesión sin contraseña (OIDC o código por correo); cluster k3s con al menos una GPU NVIDIA administrada por la plataforma; primera sesión con plantilla (JupyterLab) accesible por el proxy autenticado.</td>
+          <td>Cluster híbrido + portal + ledger</td>
+          <td>Cluster k3s con nodos en la nube y una GPU en casa unidos por Tailscale; entrada única por Cloudflare Tunnel con Access; portal FastAPI + Postgres; ledger encadenado y firmado con su comando de verificación.</td>
         </tr>
         <tr>
           <td><strong>M3</strong></td>
-          <td>Namespaces + GPU de la comunidad + libro</td>
-          <td><em>Namespace</em> por usuario con cuotas y <em>kubeconfig</em> que vence; alta de una GPU de la comunidad por red privada con código de un solo uso y <strong>cuarentena</strong>; libro de créditos encadenado y firmado con verificación periódica; simulador del cluster alimentado con trazas.</td>
+          <td>LLM + reservas + alquiler + kubectl</td>
+          <td>Gateway compatible con OpenAI que cuenta tokens y liquida; vLLM interrumpible; reservas y alquiler con reconciliador y proxy autenticado; espacio por usuario con cuotas, Pod Security <em>restricted</em> y admisión en CEL.</td>
         </tr>
         <tr>
           <td><strong>M4</strong></td>
-          <td>Planificador consciente (v1) + reservas</td>
-          <td>Reservas por calendario de punta a punta; plugin de planificación que considera memoria de GPU, ventanas reservadas y clase de carga; desalojo con aviso y período de gracia; primera comparación contra el planificador de referencia en simulación.</td>
+          <td>GPUs de la comunidad + trazas</td>
+          <td>Alta con código de un solo uso, cuarentena y calificación; cobro por uso medido con DCGM y retención; exportación de trazas anonimizadas de reservas, pods y uso del LLM.</td>
         </tr>
         <tr>
           <td><strong>M5</strong></td>
-          <td>Regreso del dueño + verificación + cobro</td>
-          <td>Liberación de un nodo de la comunidad cuando su dueño lo reclama; cargas sonda y contraste de métricas; cobro y acreditación en el libro según uso medido; demo de punta a punta: un usuario reserva una GPU de la comunidad, la usa, paga y el dueño cobra.</td>
+          <td>Planificador + medición verificable</td>
+          <td>Planificador de tres tiers que conoce VRAM, franjas y regreso del dueño, comparado contra la política de cesión del reconciliador; tier interrumpible con <em>checkpoint</em>; cruce de pod, DCGM y jobs desafío.</td>
         </tr>
         <tr>
           <td><strong>M6</strong></td>
-          <td>Benchmark + hardening + escritura</td>
-          <td>Tablas finales de métricas (simulación + cluster físico), suite adversarial de aislamiento y verificación, modelo de amenazas, repositorio documentado, tesis escrita y defensa preparada.</td>
+          <td>Experimentos + escritura</td>
+          <td>Resultados de los experimentos E2 a E6, simulación de la economía, modelo de amenaza, repositorio documentado, tesis escrita y defensa preparada.</td>
         </tr>
       </tbody>
     </table>
     <blockquote>
-      <p><strong>Hitos de control:</strong> reuniones de avance con el director al cierre de M1 (diseño), M3 (plataforma + comunidad) y M5 (demo de punta a punta), como puntos de revisión y eventual ajuste de alcance.</p>
+      <p><strong>Hitos de control:</strong> reuniones de avance con el director al cierre de M1 (diseño), M3 (plataforma de punta a punta) y M5 (planificador), como puntos de revisión y eventual ajuste de alcance.</p>
     </blockquote>
 
     <hr>
@@ -802,110 +800,105 @@ img {
 
     <h3 id="problema">4.1 Problema y motivación</h3>
     <p>
-      Experimentar con modelos de IA requiere GPU, y el acceso a ellas está concentrado: la opción habitual es alquilarlas en
-      dólares en una nube comercial o en un mercado de GPU. Al mismo tiempo, en universidades, laboratorios y hogares hay placas
-      NVIDIA que pasan gran parte del día ociosas. La idea de aprovechar capacidad ociosa no es nueva (cómputo voluntario,
-      <em>desktop grids</em>), pero los sistemas clásicos reparten tareas cortas e independientes, mientras que el uso real de una GPU
-      hoy es <strong>interactivo, con estado y de larga duración</strong>: una sesión de JupyterLab, un servidor de modelos o un
-      entrenamiento que no tolera que la máquina desaparezca a mitad de camino.
-    </p>
-    <p>
-      Compartir GPU de terceros como si fueran un cluster plantea tres problemas de ingeniería que se refuerzan entre sí:
+      Correr y probar LLMs requiere GPU. Las opciones habituales, como los mercados de GPU de terceros y las APIs comerciales, cobran en
+      dólares, mientras en casas y laboratorios hay GPUs de consumo que pasan tiempo ociosas. Prestarlas a una comunidad plantea
+      tres problemas que se refuerzan entre sí:
     </p>
     <ol>
-      <li><strong>Planificación.</strong> La capacidad es heterogénea (distinta memoria de GPU) e intermitente (el dueño puede reclamar su equipo),
-        y convive con <strong>reservas por calendario</strong> que deben respetarse sin dejar la GPU ociosa mientras no llega su horario. Los
-        planificadores de Kubernetes de uso general no modelan ni las reservas futuras ni el regreso del dueño.</li>
-      <li><strong>Confianza.</strong> En un nodo de la comunidad el dueño controla el hardware y podría informar métricas infladas o devolver
-        resultados incorrectos. Sin un mecanismo de verificación, el sistema de incentivos se vuelve explotable.</li>
-      <li><strong>Incentivos.</strong> Para que la oferta exista, aportar debe tener una recompensa; para que no se abuse, esa recompensa debe ser
-        auditable, resistente a la colusión y no convertible en dinero.</li>
+      <li><strong>Planificación.</strong> Las GPUs son heterogéneas en VRAM e intermitentes, porque su dueño puede volver a usarlas. Además conviven
+        cargas con exigencias distintas: una reserva exclusiva, un LLM compartido que debe ceder la GPU y trabajos que se pueden interrumpir.
+        Los planificadores de Kubernetes para GPU no resuelven reservas por calendario ni contabilidad de uso.</li>
+      <li><strong>Medición.</strong> El dueño de un nodo es root en su máquina y puede falsear las métricas con las que cobra. Medir sin hardware
+        de confianza es un problema abierto.</li>
+      <li><strong>Incentivos.</strong> Si solo se reparten créditos de bienvenida, sobra GPU y falta crédito; si se reparten sin freno, la masa crece
+        y aparecen ataques con identidades múltiples. El crédito tiene que sostener la oferta con equidad.</li>
     </ol>
-    <p>
-      La pregunta de la tesis no es "¿se puede alquilar una GPU?", sino <strong>"¿se puede operar un pool de GPU comunitarias,
-      heterogéneas e intermitentes, que respete reservas, pierda poco trabajo y sostenga incentivos verificables?"</strong>.
-    </p>
 
     <h3 id="antecedentes">4.2 Antecedentes</h3>
     <p>
-      La propuesta continúa la línea de la tesis doctoral del director, <em>Plataforma colaborativa, distribuida, escalable y de
-      bajo costo basada en microservicios, contenedores, dispositivos móviles y servicios en la Nube para tareas de cómputo
-      intensivo</em> (Petrocelli, UNLP, 2021), que propuso reutilizar capacidad ociosa de dispositivos orquestados con Kubernetes.
-      InferHive traslada esa idea a GPU y a cargas interactivas, y agrega reservas, verificación y créditos.
+      La tesis doctoral del director, <em>Plataforma colaborativa, distribuida, escalable y de bajo costo basada en microservicios,
+      contenedores, dispositivos móviles y servicios en la Nube para tareas de cómputo intensivo</em> (UNLP, Facultad de Informática, 2021),
+      propuso usar la capacidad ociosa de celulares ARM, mientras cargan, como un centro de datos barato y eficiente. El caso de estudio
+      fue la transcodificación distribuida de video con FFmpeg sobre microservicios en Kubernetes, con workers Android y x86 que tomaban
+      trabajo de RabbitMQ. Midió <strong>30–40× menos energía</strong> en Android ARM que en x86 para la misma tarea y <strong>8–10× más
+      velocidad</strong> al pasar de 2 a 32 nodos, con colaboración voluntaria y <strong>sin incentivos</strong>. Esta propuesta retoma su trabajo futuro:
     </p>
     <table>
-      <thead><tr><th>Antecedente</th><th>Qué aporta</th><th>Qué le falta para este problema</th></tr></thead>
+      <thead><tr><th>Trabajo futuro de la tesis de 2021</th><th>Cómo lo retoma InferHive</th></tr></thead>
       <tbody>
-        <tr><td><a href="https://boinc.berkeley.edu/" target="_blank" rel="noopener">BOINC</a></td><td>Cómputo voluntario con créditos por trabajo y validación por replicación.</td><td>Tareas por lotes, sin sesiones interactivas, reservas ni aislamiento entre usuarios.</td></tr>
-        <tr><td><a href="https://aihorde.net/mission" target="_blank" rel="noopener">AI Horde</a></td><td>Workers voluntarios de inferencia con <em>kudos</em> que no se compran ni se venden.</td><td>Solo inferencia de modelos predefinidos; sin entornos de trabajo propios ni reservas.</td></tr>
-        <tr><td><a href="https://vast.ai/" target="_blank" rel="noopener">vast.ai</a> · <a href="https://www.runpod.io/" target="_blank" rel="noopener">RunPod</a></td><td>Alquiler de GPU de terceros o de datacenters, con plantillas listas.</td><td>Mercado pago en dinero; no plantea una economía comunitaria sin valor monetario.</td></tr>
-        <tr><td><a href="https://kueue.sigs.k8s.io/" target="_blank" rel="noopener">Kueue</a> · <a href="https://github.com/NVIDIA/KAI-Scheduler" target="_blank" rel="noopener">KAI Scheduler</a> · <a href="https://volcano.sh/" target="_blank" rel="noopener">Volcano</a></td><td>Colas, cuotas, prioridades y desalojo para cargas de IA en Kubernetes.</td><td>Pensados para clusters propios y estables: no modelan reservas por calendario ni nodos que su dueño reclama.</td></tr>
+        <tr><td>Clasificador inteligente de tareas y nodos</td><td>Planificador que conoce VRAM, tipo de carga, franjas y regreso del dueño (línea principal).</td></tr>
+        <tr><td>Modelo de incentivos basado en créditos</td><td>Processing coins sobre un ledger <em>append-only</em>, encadenado y firmado.</td></tr>
+        <tr><td>Nuevas tareas de cómputo intensivo</td><td>Inferencia de LLM y cargas genéricas en contenedores.</td></tr>
+        <tr><td>Nodos heterogéneos con fallas</td><td>Tier interrumpible con <em>checkpoint</em>; workers con <em>lease</em> y reintento en la Versión Completa.</td></tr>
+        <tr><td>Video en vivo, H.265 y H.266</td><td>Fuera de alcance.</td></tr>
+      </tbody>
+    </table>
+    <p>Lo nuevo respecto de 2021 es la <strong>seguridad multiinquilino</strong>. Otros trabajos relacionados:</p>
+    <table>
+      <thead><tr><th>Proyecto</th><th>Qué hace</th><th>Diferencia con InferHive</th></tr></thead>
+      <tbody>
+        <tr><td><a href="https://aihorde.net/mission" target="_blank" rel="noopener">AI Horde</a></td><td>Workers voluntarios de texto e imagen que ganan <em>kudos</em> sin valor.</td><td>Antecedente más cercano. Sin multiinquilino, reservas ni medición de hardware.</td></tr>
+        <tr><td><a href="https://doi.org/10.18653/v1/2023.acl-demo.54" target="_blank" rel="noopener">Petals</a></td><td>Inferencia de un modelo grande repartida por capas entre voluntarios.</td><td>Sin incentivos; supone nodos confiables.</td></tr>
+        <tr><td><a href="https://vast.ai/" target="_blank" rel="noopener">vast.ai</a> · <a href="https://www.runpod.io/" target="_blank" rel="noopener">RunPod</a></td><td>Mercados de GPU de terceros en dólares.</td><td>InferHive usa crédito sin valor, calendario de reservas y tiers explícitos.</td></tr>
+        <tr><td><a href="https://boinc.berkeley.edu/" target="_blank" rel="noopener">BOINC</a></td><td>Cómputo voluntario con créditos.</td><td>InferHive ata identidad, máquina y antigüedad para evitar créditos por identidades múltiples.</td></tr>
+        <tr><td><a href="https://doi.org/10.1007/10968987_4" target="_blank" rel="noopener">OurGrid</a></td><td>Grid de favores en Brasil.</td><td>Antecedente latinoamericano sin ledger de uso medido.</td></tr>
+        <tr><td><a href="https://kueue.sigs.k8s.io/" target="_blank" rel="noopener">Kueue</a> · <a href="https://volcano.sh/" target="_blank" rel="noopener">Volcano</a> · <a href="https://github.com/Project-HAMi/HAMi" target="_blank" rel="noopener">HAMi</a></td><td>Planificación y particionado de GPU en Kubernetes.</td><td>Ninguno resuelve reservas por calendario ni contabilidad de uso.</td></tr>
+        <tr><td><a href="https://nationalresearchplatform.org/" target="_blank" rel="noopener">NRP Nautilus</a> · <a href="https://www.chameleoncloud.org/" target="_blank" rel="noopener">Chameleon</a></td><td>Infraestructura académica con reservas.</td><td>Sin «ganar contribuyendo».</td></tr>
+        <tr><td><a href="https://proceedings.mlr.press/v267/ong25a.html" target="_blank" rel="noopener">TOPLOC</a></td><td>Huellas de inferencia para detectar cambio de modelo o de prompt.</td><td>Candidata para verificar el tier compartido.</td></tr>
       </tbody>
     </table>
 
     <h3 id="objetivos">4.3 Objetivos</h3>
-    <p><strong>Objetivo general.</strong> Diseñar e implementar un MVP funcional de una plataforma comunitaria de cómputo GPU sobre
-      Kubernetes, con un planificador consciente de reservas y de disponibilidad intermitente, verificación de nodos no confiables y un
-      sistema de créditos por uso medido, y evaluarlo con hipótesis falsables.</p>
+    <p><strong>Objetivo general.</strong> Diseñar, implementar y evaluar un MVP de una plataforma de préstamo federado de GPUs de consumo
+      para cargas de LLM sobre un cluster k3s híbrido, con un planificador de tres tiers, medición verificable y una economía de créditos
+      sin valor monetario.</p>
     <p><strong>Objetivos específicos:</strong></p>
     <ol>
-      <li>Implementar un <strong>control plane</strong> con aislamiento a nivel de base de datos (Postgres RLS) y autenticación sin contraseñas.</li>
-      <li>Ofrecer tres <strong>modos de uso</strong> sobre Kubernetes: sesiones al momento con plantillas, reservas por calendario y <em>namespaces</em> aislados con cuotas.</li>
-      <li>Incorporar <strong>GPU de la comunidad</strong> por red privada, sin abrir puertos en la red del dueño, con un período de cuarentena previo.</li>
-      <li>Diseñar e implementar un <strong>planificador consciente</strong> de memoria de GPU, reservas y regreso del dueño, y compararlo contra un planificador de referencia.</li>
-      <li>Implementar <strong>verificación de nodos</strong> mediante cargas sonda y contraste de métricas, con cuarentena ante fallas.</li>
-      <li>Implementar un <strong>libro de créditos</strong> encadenado y firmado, con reglas de cobro, reparto y topes contra el abuso.</li>
-      <li>Validar todo mediante <strong>hipótesis falsables</strong>, simulación con trazas reales y un cluster físico, declarando las amenazas a la validez.</li>
+      <li>Construir un cluster <strong>k3s híbrido</strong> que una nodos en la nube con GPUs en casas, sin puertos abiertos.</li>
+      <li>Ofrecer cuatro <strong>formas de uso</strong>: API de LLM compatible con OpenAI, alquiler al momento, reservas por franja y <code>kubectl</code> en un espacio propio.</li>
+      <li>Permitir que terceros <strong>sumen su GPU</strong> con cuarentena y calificación previas.</li>
+      <li>Diseñar e implementar un <strong>planificador de tres tiers</strong> que conozca VRAM, franjas y regreso del dueño, con tolerancia a interrupciones.</li>
+      <li>Implementar <strong>medición verificable</strong> del uso, cruzando fuentes independientes, con un modelo de amenaza del dueño deshonesto.</li>
+      <li>Implementar la <strong>economía del PC</strong> sobre un libro encadenado y firmado, y analizar su equidad por simulación.</li>
+      <li>Publicar un <strong>dataset abierto de trazas</strong> anonimizadas del cluster.</li>
     </ol>
 
-    <h3 id="contribucion">4.4 Contribución de ingeniería</h3>
-    <blockquote>
-      <p>El aporte no es un modelo de IA ni un mercado de GPU más. Es <strong>la ingeniería de un pool comunitario operable</strong>:
-      un planificador que respeta reservas y tolera nodos que se van, un esquema de verificación para hardware que no se controla
-      y un libro de créditos auditable, integrados en una plataforma multiusuario sobre Kubernetes.</p>
-    </blockquote>
-    <p>
-      Encaja con el perfil de <strong>Ingeniería en Computación</strong>: el peso está en sistemas distribuidos, planificación de
-      recursos, redes, seguridad e infraestructura (extensión del planificador de Kubernetes, controladores propios, red privada,
-      aislamiento de cargas y registros a prueba de manipulación). Los modelos de IA son solo las cargas de trabajo.
-    </p>
+    <h3 id="contribucion">4.4 Contribuciones esperadas</h3>
+    <ul>
+      <li>Arquitectura de referencia de un cluster k3s híbrido entre la nube y hogares.</li>
+      <li>Planificador con tres tiers: reserva exclusiva, inferencia compartida e interrumpible.</li>
+      <li>Tolerancia a interrupciones para cargas que ceden la GPU.</li>
+      <li>La economía del PC con análisis de equidad.</li>
+      <li>Medición verificable con modelo de amenaza del host deshonesto.</li>
+      <li>Un dataset abierto de trazas de un cluster docente argentino.</li>
+    </ul>
 
     <h3 id="alcance">4.5 Alcance: MVP vs Versión Completa</h3>
-    <p>
-      El MVP se <strong>acota</strong> a GPU NVIDIA conectadas al cluster y a cargas en contenedores, y concentra el esfuerzo en el
-      planificador. Cada capacidad que queda fuera tiene su contrapartida en la Versión Completa (sección 6).
-    </p>
     <table>
       <thead>
         <tr><th>Dimensión</th><th>MVP (6 meses)</th><th>Versión Completa</th></tr>
       </thead>
       <tbody>
-        <tr><td>Modos de uso</td><td>Sesiones al momento, reservas por calendario, <em>namespace</em> Kubernetes</td><td>+ API de inferencia compatible con OpenAI, servidor MCP para agentes</td></tr>
-        <tr><td>Proveedores</td><td>GPU propias de la plataforma + GPU de la comunidad por red privada</td><td>+ Workers en PC/Mac, navegador (WebGPU) y Android que piden tareas por HTTPS</td></tr>
-        <tr><td>Plantillas de sesión</td><td>JupyterLab + PyTorch, terminal CUDA</td><td>+ vLLM, ComfyUI y plantillas de la comunidad</td></tr>
-        <tr><td>Planificador</td><td>Memoria de GPU, reservas, clase de carga, regreso del dueño</td><td>+ Predicción de disponibilidad, GPU fraccionada, varios clusters</td></tr>
-        <tr><td>Verificación</td><td>Cuarentena, cargas sonda, contraste de métricas</td><td>+ Tareas canario y re-ejecución cruzada para inferencia; hardware de confianza</td></tr>
-        <tr><td>Créditos</td><td>Libro encadenado y firmado, reglas fijas parametrizadas</td><td>+ Tarifas dinámicas según oferta y demanda, reputación</td></tr>
-        <tr><td>Autenticación</td><td>OIDC o código por correo, llaves para la CLI</td><td>+ SSO institucional, organizaciones y equipos</td></tr>
+        <tr><td>Formas de uso</td><td>API de LLM compatible con OpenAI, alquiler al momento, reservas por franja, <code>kubectl</code></td><td>+ Servidor MCP para agentes de IA</td></tr>
+        <tr><td>Quién presta</td><td>Tier A: GPU propia de la plataforma y GPUs de la comunidad unidas al cluster</td><td>+ Tier B: workers en cualquier dispositivo (CLI, navegador, Android)</td></tr>
+        <tr><td>Planificador</td><td>Tres tiers, VRAM, franjas, regreso del dueño</td><td>+ Partición de modelos entre hogares</td></tr>
+        <tr><td>Verificación</td><td>Cuarentena, calificación, cruce de pod, DCGM y jobs desafío</td><td>+ Canarios y re-ejecución en tier B, huellas tipo TOPLOC, métricas firmadas</td></tr>
+        <tr><td>Aislamiento</td><td>Pod Security <em>restricted</em>, admisión en CEL, cuotas, proxy de salida</td><td>+ gVisor o Kata para imágenes de terceros</td></tr>
+        <tr><td>Economía</td><td>PC sin valor monetario, parámetros fijos</td><td>+ Reajuste de parámetros a partir de la simulación</td></tr>
       </tbody>
     </table>
 
-    <h3 id="hipotesis">4.6 Hipótesis falsables</h3>
-    <p>Cada hipótesis tiene una métrica medible y un criterio de falsación explícito. Los umbrales son <strong>objetivos a validar</strong>,
-      no resultados afirmados de antemano. H1 a H4 corresponden a la línea principal (planificador).</p>
+    <h3 id="hipotesis">4.6 Preguntas e hipótesis</h3>
+    <p>Los umbrales son <strong>metas iniciales</strong> a validar, no resultados afirmados de antemano. RQ1 y RQ2 corresponden a la línea principal.</p>
     <table>
       <thead>
-        <tr><th>#</th><th>Hipótesis</th><th>Métrica / criterio</th></tr>
+        <tr><th>Pregunta</th><th>Hipótesis (meta inicial)</th><th>Experimento</th></tr>
       </thead>
       <tbody>
-        <tr><td><strong>H1</strong></td><td>El planificador respeta todas las reservas, aun usando la GPU para otras cargas antes del horario reservado.</td><td>0 reservas que empiezan tarde por culpa de otra carga (con margen de 60 s), en simulación y en el cluster físico.</td></tr>
-        <tr><td><strong>H2</strong></td><td>Planificar con conocimiento de reservas y memoria aumenta la utilización respecto del planificador de referencia.</td><td>Utilización de GPU (GPU·h usadas / GPU·h disponibles) mayor que la de referencia, con diferencia significativa sobre las mismas trazas.</td></tr>
-        <tr><td><strong>H3</strong></td><td>El desalojo con aviso y período de gracia reduce el trabajo perdido.</td><td>GPU·h perdidas por desalojo al menos 50 % menores que con el desalojo inmediato de referencia.</td></tr>
-        <tr><td><strong>H4</strong></td><td>Un dueño puede recuperar su equipo rápido.</td><td>Tiempo desde que el dueño lo reclama hasta que la GPU queda libre &lt; 60 s en el percentil 95.</td></tr>
-        <tr><td><em>H5 (sec.)</em></td><td>Las cargas sonda detectan nodos que mienten sobre sus métricas o su capacidad.</td><td>Tasa de detección ≥ 95 % de los nodos deshonestos inyectados, con un costo de sondas ≤ 5 % de la capacidad del pool.</td></tr>
-        <tr><td><em>H6 (sec.)</em></td><td>El libro de créditos detecta cualquier alteración.</td><td>100 % de las alteraciones inyectadas detectadas en la verificación periódica; la suma de todos los saldos se mantiene en cero.</td></tr>
-        <tr><td><em>H7 (sec.)</em></td><td>Los topes acotan la ganancia por colusión entre cuentas.</td><td>En simulación de agentes, la ganancia de un grupo que se coluda no supera el tope semanal configurado.</td></tr>
-        <tr><td><em>H8 (sec.)</em></td><td>Las cargas de un usuario no pueden acceder a las de otro ni al resto del equipo del dueño.</td><td>0 accesos exitosos en la suite adversarial de aislamiento (resultado binario: pasa o no pasa).</td></tr>
+        <tr><td><strong>RQ1.</strong> ¿Un planificador que conozca VRAM, franjas y regreso del dueño mejora utilización y espera?</td><td><strong>H1.</strong> Al menos 1,5 veces más utilización, 0 reservas violadas e índice de equidad de Jain ≥ 0,8.</td><td>E2 trazas · E3 planificador</td></tr>
+        <tr><td><strong>RQ2.</strong> ¿Cuánto cuesta un tier interrumpible con <em>checkpoint</em>?</td><td><strong>H2.</strong> Menos de 5 % de trabajo perdido en un fine-tuning QLoRA.</td><td>E4 interrupción</td></tr>
+        <tr><td><em>RQ3 (sec.).</em> ¿Cuánto puede inflar su medición un host deshonesto?</td><td><strong>H3.</strong> Cruzar pod, DCGM y jobs desafío detecta más del 95 % de los intentos, con menos de 3 % de sobrecosto.</td><td>E5 medición</td></tr>
+        <tr><td><em>RQ4 (sec.).</em> ¿Un crédito por GPU-hora medida sostiene oferta y equidad?</td><td><strong>H4.</strong> Con asignación periódica, vencimiento y topes, la simulación mantiene utilización y demanda atendida, baja la concentración (Gini) y acota la ganancia de un ataque con identidades múltiples. Los umbrales se fijan en M1.</td><td>E6 economía</td></tr>
       </tbody>
     </table>
 
@@ -914,13 +907,26 @@ img {
     <!-- ===================== 5. DETALLES ===================== -->
     <h2 id="detalles">5. Detalles de la propuesta</h2>
 
-    <h3 id="arquitectura">5.1 Arquitectura — tres planos</h3>
+    <h3 id="actores">5.1 Actores</h3>
+    <table>
+      <thead><tr><th>Actor</th><th>Qué hace</th><th>Cómo entra</th><th>PC</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Inquilino</strong> (alumno, investigador)</td><td>Usa el LLM, alquila GPU o CPU, reserva franjas, trabaja con <code>kubectl</code></td><td>Código por mail (OTP) y aprobación del operador</td><td>Gasta. Recibe 10 PC de bienvenida y 5 cada 28 días</td></tr>
+        <tr><td><strong>Dueño de GPU</strong> (tier A)</td><td>Suma su máquina como nodo k3s del cluster</td><td>Código de un solo uso (1 h) e instalador de una línea; cuenta con al menos 7 días</td><td>Cobra por uso medido, menos comisión, con retención</td></tr>
+        <tr><td><strong>Operador</strong></td><td>Aprueba accesos, audita, opera el cluster</td><td>Identidad de administrador</td><td>La mitad de cada comisión va a la cuenta plataforma</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="arquitectura">5.2 Arquitectura</h3>
     <p>
-      InferHive se organiza en tres planos con responsabilidades separadas. El invariante central: <strong>ningún usuario puede
-      leer ni afectar el trabajo de otro</strong>, y <strong>ningún crédito se mueve sin una medición que lo respalde</strong>.
+      Un solo cluster <a href="https://docs.k3s.io/" target="_blank" rel="noopener">k3s</a> une nodos chicos en la nube con las GPUs en casas.
+      Los nodos hablan entre sí por <a href="https://tailscale.com/kb/1151/what-is-tailscale" target="_blank" rel="noopener">Tailscale</a>
+      (flannel sobre la interfaz de Tailscale y ACL por tags), así que ninguna casa necesita puertos abiertos. Todo el tráfico de usuarios entra por un único
+      <a href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/" target="_blank" rel="noopener">Cloudflare Tunnel</a>,
+      con <a href="https://developers.cloudflare.com/cloudflare-one/policies/access/" target="_blank" rel="noopener">Cloudflare Access</a> delante del portal y de la API de Kubernetes.
     </p>
     <div class="arch-diagram">
-      <svg viewBox="0 0 760 360" role="img" aria-label="Arquitectura de InferHive en tres planos: control, cómputo en Kubernetes y medición con libro de créditos" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 760 380" role="img" aria-label="Arquitectura de InferHive: entrada por Cloudflare, nodos en la nube y GPUs en casas unidos por Tailscale en un cluster k3s" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <marker id="arrow" markerWidth="10" markerHeight="10" refX="6.5" refY="3" orient="auto" markerUnits="strokeWidth">
             <path d="M0,0 L7,3 L0,6 Z" class="arc-head"/>
@@ -928,197 +934,207 @@ img {
         </defs>
 
         <rect class="arc-box" x="60" y="14" width="640" height="92" rx="10"/>
-        <text class="arc-title" x="80" y="40">PLANO DE CONTROL — portal, API y reservas</text>
-        <text class="arc-line"  x="80" y="64">FastAPI · Postgres (RLS) · portal web · CLI/SDK</text>
-        <text class="arc-line"  x="80" y="86">Auth sin contraseña (OIDC / código por correo) · calendario de reservas</text>
+        <text class="arc-title" x="80" y="40">ENTRADA — Cloudflare</text>
+        <text class="arc-line"  x="80" y="64">Access: OTP por mail, JWT firmado · Tunnel: sin puertos abiertos</text>
+        <text class="arc-line"  x="80" y="86">portal (con Access) · API LLM (llave pck_) · API de k8s (con Access)</text>
 
         <line class="arc-edge" x1="200" y1="106" x2="200" y2="152" marker-end="url(#arrow)"/>
-        <line class="arc-edge" x1="560" y1="152" x2="560" y2="106" marker-end="url(#arrow)"/>
-        <text class="arc-lbl" x="212" y="134">sesiones / reservas / namespaces</text>
-        <text class="arc-lbl" x="572" y="134">saldos y movimientos</text>
+        <text class="arc-lbl" x="212" y="134">tunnel</text>
 
-        <rect class="arc-box" x="40" y="158" width="320" height="186" rx="10"/>
-        <text class="arc-title" x="60" y="184">PLANO DE CÓMPUTO — Kubernetes (k3s)</text>
-        <text class="arc-line"  x="60" y="212">Planificador consciente (plugin)</text>
-        <text class="arc-line"  x="60" y="236">Nodos GPU propios</text>
-        <text class="arc-line"  x="60" y="260">Nodos GPU de la comunidad</text>
-        <text class="arc-line"  x="60" y="284">(red privada, sin puertos abiertos)</text>
-        <text class="arc-foot"  x="60" y="312"><tspan x="60">Namespace por usuario, cuotas,</tspan><tspan x="60" dy="16">contenedores sin privilegios</tspan></text>
+        <rect class="arc-box" x="40" y="158" width="320" height="206" rx="10"/>
+        <text class="arc-title" x="60" y="184">NODOS EN LA NUBE</text>
+        <text class="arc-line"  x="60" y="210">Control plane de k3s</text>
+        <text class="arc-line"  x="60" y="232">Portal FastAPI · Postgres (ledger PC)</text>
+        <text class="arc-line"  x="60" y="254">Gateway LLM (cuenta tokens)</text>
+        <text class="arc-line"  x="60" y="276">Reconciliador · join-broker · calificador</text>
+        <text class="arc-line"  x="60" y="298">Squid (salida 80/443)</text>
+        <text class="arc-foot"  x="60" y="330"><tspan x="60">Liquida, autoriza y lleva</tspan><tspan x="60" dy="16">la cuenta de los créditos</tspan></text>
 
-        <rect class="arc-box" x="400" y="158" width="320" height="186" rx="10"/>
-        <text class="arc-title" x="420" y="184">PLANO DE MEDICIÓN Y CRÉDITOS</text>
-        <text class="arc-line"  x="420" y="212">Métricas de GPU (DCGM) por carga</text>
-        <text class="arc-line"  x="420" y="236">Cargas sonda y cuarentena</text>
-        <text class="arc-line"  x="420" y="260">Libro encadenado + HMAC</text>
-        <text class="arc-line"  x="420" y="284">Verificación periódica</text>
-        <text class="arc-foot"  x="420" y="320">Fuente de verdad: el uso medido y contrastado</text>
+        <rect class="arc-box" x="400" y="158" width="320" height="206" rx="10"/>
+        <text class="arc-title" x="420" y="184">GPUs EN CASAS (tier A)</text>
+        <text class="arc-line"  x="420" y="210">Nodo propio: vLLM interrumpible</text>
+        <text class="arc-line"  x="420" y="232">que cede la GPU a reservas</text>
+        <text class="arc-line"  x="420" y="254">Nodos de la comunidad:</text>
+        <text class="arc-line"  x="420" y="276">cuarentena → community</text>
+        <text class="arc-line"  x="420" y="298">dcgm-exporter en cada GPU</text>
+        <text class="arc-foot"  x="420" y="340">Sin puertos abiertos en la casa</text>
 
-        <line class="arc-edge" x1="360" y1="250" x2="400" y2="250" marker-end="url(#arrow)"/>
-        <text class="arc-lbl" x="380" y="242" text-anchor="middle">uso</text>
+        <line class="arc-edge" x1="360" y1="262" x2="400" y2="262" marker-end="url(#arrow)"/>
+        <line class="arc-edge" x1="400" y1="282" x2="360" y2="282" marker-end="url(#arrow)"/>
+        <text class="arc-lbl" x="380" y="254" text-anchor="middle">Tailscale</text>
       </svg>
     </div>
-    <ul>
-      <li><strong>Control:</strong> portal web, API REST y CLI; usuarios, equipos aportados, reservas y saldos. Postgres con RLS como última línea de aislamiento.</li>
-      <li><strong>Cómputo:</strong> un cluster Kubernetes que reúne GPU propias y GPU de la comunidad; el planificador decide dónde y cuándo corre cada carga.</li>
-      <li><strong>Medición y créditos:</strong> mide el uso real de cada carga, lo contrasta con lo que informa el nodo y registra los movimientos de créditos en un libro que no se puede alterar sin que se note.</li>
-    </ul>
 
-    <h3 id="modos">5.2 Modos de uso</h3>
-    <table>
-      <thead><tr><th>Modo</th><th>Qué obtiene el usuario</th><th>Clase de carga para el planificador</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Sesión al momento</strong></td><td>Una plantilla lista (JupyterLab + PyTorch o terminal CUDA) en una GPU libre, por bloques de 10 minutos extensibles, con cobro por segundo. Acceso solo por un proxy autenticado en el navegador, sin SSH ni IP pública.</td><td>Interactiva: puede ser desalojada con aviso si se acerca una reserva o vuelve el dueño.</td></tr>
-        <tr><td><strong>Reserva por calendario</strong></td><td>Una GPU exclusiva por una franja de hasta 4 horas, reservada con hasta 14 días de anticipación. Se libera sola tras 30 minutos sin uso.</td><td>Garantizada: no se desaloja dentro de su franja (H1).</td></tr>
-        <tr><td><strong><em>Namespace</em> Kubernetes</strong></td><td>Un espacio aislado con cuotas de CPU, memoria, disco y GPU, y un <em>kubeconfig</em> que vence a los 14 días, emitido con tokens de duración acotada (<a href="https://kubernetes.io/docs/reference/kubernetes-api/authentication-resources/token-request-v1/" target="_blank" rel="noopener">TokenRequest</a>).</td><td>Por lotes: interrumpible, con aviso para guardar estado (<em>checkpoint</em>).</td></tr>
-      </tbody>
-    </table>
-    <p>Los valores (10 minutos, 4 horas, 14 días, 30 minutos) son <strong>parámetros iniciales</strong> de diseño, configurables y sujetos a ajuste durante la evaluación.</p>
-
-    <h3 id="proveedores">5.3 Proveedores y red privada</h3>
-    <ul>
-      <li><strong>GPU propias:</strong> nodos administrados por la plataforma. Son confiables y alojan las cargas marcadas como sensibles.</li>
-      <li><strong>GPU de la comunidad:</strong> una placa NVIDIA de 8 GB de memoria o más, en Linux o en Windows con WSL2. El dueño pide en el portal un código de un solo uso y ejecuta un instalador que une la máquina al cluster por una red privada basada en WireGuard (<a href="https://tailscale.com/kb/1151/what-is-tailscale" target="_blank" rel="noopener">Tailscale</a> o su servidor de control libre, <a href="https://github.com/juanfont/headscale" target="_blank" rel="noopener">Headscale</a>), sin abrir puertos en su red. GPU expuesta al cluster con el <a href="https://github.com/NVIDIA/k8s-device-plugin" target="_blank" rel="noopener">NVIDIA device plugin</a>.</li>
-      <li><strong>Cuarentena:</strong> todo nodo nuevo entra marcado (<em>taint</em>) y solo recibe cargas sonda hasta pasar las pruebas de velocidad, memoria y aislamiento. El nodo no puede modificar sus propias etiquetas de confianza: las escribe solo el control plane.</li>
-      <li><strong>Límites iniciales:</strong> hasta 2 máquinas por cuenta y antigüedad mínima de la cuenta de 7 días (parámetros a calibrar).</li>
-    </ul>
-
-    <h3 id="planificador">5.4 Planificador consciente (línea principal)</h3>
-    <p>
-      El planificador decide en qué GPU corre cada carga y cuándo hay que desalojarla. Se implementa como <strong>plugin del
-      <a href="https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/" target="_blank" rel="noopener">Scheduling Framework</a></strong>
-      de Kubernetes, más un controlador propio que administra las reservas como recurso personalizado (<code>GpuReservation</code>).
-      Tiene en cuenta cuatro cosas que los planificadores generales no combinan:
-    </p>
+    <h3 id="recorridos">5.3 Recorridos principales</h3>
+    <p><strong>Una llamada al LLM</strong></p>
     <ol>
-      <li><strong>Memoria de GPU:</strong> una carga solo va a un nodo con memoria suficiente para el modelo declarado (filtro), y se prefiere el nodo más ajustado para no fragmentar el pool (puntaje).</li>
-      <li><strong>Reservas futuras:</strong> una GPU reservada para dentro de dos horas puede alojar una sesión o un lote ahora, pero el planificador estima si terminará antes y, si no, programa su desalojo con aviso previo al inicio de la franja.</li>
-      <li><strong>Clase de carga:</strong> reservada (no se desaloja), interactiva (desalojo con aviso) y por lotes (interrumpible con <em>checkpoint</em>). Se apoya en
-        <a href="https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/" target="_blank" rel="noopener">prioridades y desalojo de pods</a>.</li>
-      <li><strong>Regreso del dueño:</strong> un agente en el nodo de la comunidad avisa cuando el dueño reclama su equipo; el planificador drena el nodo con un período de gracia y reubica lo que pueda (H4).</li>
+      <li>El cliente manda <code>/v1/chat/completions</code> con su llave <code>pck_</code>; el gateway valida formato y límite (60 por minuto).</li>
+      <li>El portal valida la llave y bloquea el peor caso: prompt más <code>max_tokens</code>.</li>
+      <li>El gateway manda el pedido al vLLM. Si la GPU está reservada, responde con la hora en que se libera.</li>
+      <li>Cuenta los tokens de la respuesta él mismo, con el tokenizador del modelo, y avisa si el nodo informó más de 5 % de diferencia. Nunca cobra lo que dice el nodo.</li>
+      <li>Liquida: quema lo usado, devuelve el resto y le paga al dueño con retención.</li>
+    </ol>
+    <p><strong>Una reserva o alquiler de GPU</strong></p>
+    <ol>
+      <li>El inquilino pide una franja (hasta 4 h, una por día) o alquila al momento; se bloquean horas × tarifa.</li>
+      <li>Al abrirse la ventana, el reconciliador sube la cuota de GPU a 1 y apaga el vLLM 60 s antes.</li>
+      <li>Una política de admisión fija el pod al nodo con GPU y le pone un tiempo máximo de vida.</li>
+      <li>Si no hay pods a los 15 minutos, avisa; a los 30, cierra como <em>no-show</em>.</li>
+      <li>Al cerrar, cobra el uso medido por DCGM con piso del 25 % y vuelve a levantar el vLLM.</li>
     </ol>
     <p>
-      <strong>Planificador de referencia:</strong> el <em>kube-scheduler</em> por defecto con prioridades, y
-      <a href="https://kueue.sigs.k8s.io/" target="_blank" rel="noopener">Kueue</a> como alternativa de colas con desalojo. Las reservas
-      se modelan en la referencia como bloqueo exclusivo del nodo durante la franja.
+      El alquiler se hace desde un buscador de ofertas con tok/s medidos, uptime y próximo turno libre. Cada instancia se abre por un proxy
+      <code>/i/&lt;id&gt;/</code> autenticado y solo accesible para su dueño, con logs, extender y detener, y cobro por segundo con devolución automática.
+      Quien prefiere <code>kubectl</code> accede a la API de Kubernetes a través de Cloudflare Access, en un espacio propio con cuotas.
     </p>
-    <p>
-      <strong>Evaluación:</strong> con pocas GPU físicas no hay volumen para conclusiones estadísticas, por lo que el planificador se evalúa
-      primero en <strong>simulación dirigida por trazas</strong> (<a href="https://kwok.sigs.k8s.io/" target="_blank" rel="noopener">KWOK</a>
-      para nodos simulados, con la traza pública de GPU de Alibaba <a href="https://github.com/alibaba/clusterdata" target="_blank" rel="noopener">cluster-trace-gpu-v2020</a>)
-      y luego se valida en el cluster físico con cargas reales. La disponibilidad intermitente de los nodos de la comunidad se modela con distribuciones
-      de sesión documentadas en la literatura de cómputo voluntario.
-    </p>
+    <p><strong>Un dueño suma su GPU</strong></p>
+    <ol>
+      <li>Acepta los términos y recibe un código de un solo uso que vence en 1 hora.</li>
+      <li>En su máquina corre el instalador (Linux o Windows con WSL2), que canjea el código.</li>
+      <li>El join-broker emite un token de arranque de k3s de 1 h y una llave de Tailscale de un uso.</li>
+      <li>El nodo entra con <em>taint</em> de cuarentena; el calificador mide tok/s y VRAM y verifica que un contenedor sin GPU no la vea.</li>
+      <li>Si pasa, queda como <em>community</em>; si no, el dueño ve el motivo. La baja borra nodo, dispositivo y token.</li>
+    </ol>
 
-    <h3 id="verificacion">5.5 Verificación de nodos no confiables (línea secundaria)</h3>
+    <h3 id="planificador">5.4 Planificador (línea principal)</h3>
     <p>
-      En un nodo de la comunidad el dueño controla el hardware: podría informar métricas infladas o devolver resultados incorrectos.
-      Como las cargas de los usuarios (sesiones y <em>namespaces</em>) no se pueden re-ejecutar para comparar, la verificación se basa en
-      <strong>cargas que inyecta la propia plataforma</strong>, siguiendo la idea de <em>spot-checking</em> del cómputo voluntario (Sarmenta, 2002):
+      El punto de partida es una <strong>política de cesión</strong> simple: reservas por franja, clases de prioridad y un LLM que cede la GPU
+      cuando se abre una ventana. Esa política no conoce la VRAM ni el tipo de carga. La tesis propone un planificador con
+      <strong>tres tiers</strong>:
     </p>
     <ul>
-      <li><strong>Sondas con resultado conocido:</strong> benchmarks deterministas (multiplicaciones de matrices, inferencia de un modelo de referencia) cuyo resultado y tiempo esperado conoce la plataforma. Se corren en cuarentena y periódicamente durante el tiempo ocioso.</li>
-      <li><strong>Re-ejecución cruzada de sondas:</strong> la misma sonda se ejecuta en un nodo de otro dueño para comparar el resultado y el rendimiento.</li>
-      <li><strong>Contraste de métricas:</strong> el uso que informa el nodo (vía <a href="https://github.com/NVIDIA/dcgm-exporter" target="_blank" rel="noopener">DCGM exporter</a>) se compara con lo que el control plane observa por su cuenta (vida de los pods según la API de Kubernetes, tiempos de respuesta de las sondas).</li>
-      <li><strong>Consecuencia:</strong> un nodo que falla vuelve a cuarentena y pierde los créditos retenidos; por eso los créditos se acreditan con demora (ver 5.6).</li>
+      <li><strong>Reserva exclusiva:</strong> la franja reservada o alquilada es intocable (0 reservas violadas).</li>
+      <li><strong>Inferencia compartida:</strong> el LLM aprovecha la GPU mientras no hay reserva y la cede a tiempo.</li>
+      <li><strong>Interrumpible:</strong> trabajos que pueden ceder la GPU y retomar desde un <em>checkpoint</em>, para llenar los huecos con poco trabajo perdido.</li>
     </ul>
-    <p><strong>Límite declarado:</strong> sin hardware de confianza, la medición en un nodo ajeno sigue siendo un problema abierto. La tesis mide cuánto acotan el fraude estos controles (H5); no afirma que lo eliminen.</p>
-
-    <h3 id="creditos">5.6 Créditos y libro firmado (línea secundaria)</h3>
     <p>
-      Los créditos de procesamiento (PC) no se compran, no se transfieren entre cuentas y no tienen valor monetario. Cada movimiento se
-      registra en un <strong>libro de doble entrada</strong> en Postgres, de solo agregado: cada asiento guarda el hash del anterior y una firma
-      <a href="https://www.rfc-editor.org/rfc/rfc2104" target="_blank" rel="noopener">HMAC</a> cuya clave vive en un gestor de secretos, nunca en el código.
-      Un proceso recorre la cadena cada hora y verifica que no haya cortes, que las firmas sean válidas y que la suma de todos los saldos sea cero.
-      Es un registro a prueba de manipulación en la línea de Crosby y Wallach (2009); <strong>no es una blockchain</strong> ni requiere consenso distribuido.
+      Además de los tiers, el planificador tiene en cuenta la VRAM de cada GPU, las franjas futuras y el <strong>regreso del dueño</strong> de un
+      nodo de la comunidad. Se compara contra la política de cesión usando trazas reales del cluster (E2), con tres métricas: utilización,
+      reservas violadas y equidad (índice de Jain).
+    </p>
+
+    <h3 id="medicion">5.5 Medición y verificación</h3>
+    <p>
+      El modelo de amenaza tiene dos frentes: un inquilino que intenta salirse de su espacio y el dueño de un nodo que es root en su
+      máquina. Frente al dueño, la plataforma mide por su cuenta:
+    </p>
+    <ul>
+      <li><strong>Uso de GPU:</strong> el dueño cobra solo el uso efectivo según <a href="https://github.com/NVIDIA/dcgm-exporter" target="_blank" rel="noopener">DCGM</a>; sin métricas, no cobra.</li>
+      <li><strong>Tokens:</strong> los cuenta el gateway, nunca el nodo.</li>
+      <li><strong>Cuarentena y calificación:</strong> un Job de benchmark y otro de <em>hardening</em> antes de recibir trabajo. Un nodo no puede cambiar sus propias etiquetas de confianza ni sacarse la cuarentena.</li>
+      <li><strong>Retención:</strong> las ganancias se retienen (7 días en la comunidad, 24 h en verificados) y el operador puede anularlas por fraude.</li>
+    </ul>
+    <p>
+      <strong>Problema abierto:</strong> el dueño puede falsear DCGM. La tesis evalúa cruzar tres fuentes independientes (el pod según Kubernetes,
+      DCGM y jobs desafío de resultado conocido) para medir cuánto puede inflar un host deshonesto (H3).
+    </p>
+
+    <h3 id="creditos">5.6 Créditos y libro contable</h3>
+    <p>
+      El <strong>processing coin (PC)</strong> es un crédito de cómputo sin valor monetario. No se compra, no cotiza y las transferencias entre
+      cuentas están apagadas por defecto. Entra al sistema por la bienvenida, la asignación periódica y lo que ganan los dueños; sale por
+      quema (comisiones, penalidades y vencimientos).
+    </p>
+    <p>
+      <strong>El libro:</strong> cada movimiento se agrega a una tabla de Postgres que no admite <code>UPDATE</code> ni <code>DELETE</code> (lo impide un trigger).
+      Cada fila guarda el hash de la anterior, y su propio hash va firmado con <a href="https://www.rfc-editor.org/rfc/rfc2104" target="_blank" rel="noopener">HMAC</a>.
+      Como <code>prev_hash</code> es único, la cadena no se puede bifurcar. La suma de todas las cuentas da cero y el portal recorre la cadena entera
+      cada hora; la verificación falla si una fila se editó, se borró o se falsificó. Tipos de movimiento: <code>grant</code>, <code>mint</code>,
+      <code>lock</code>, <code>burn</code>, <code>refund</code>, <code>penalty</code> y <code>transfer</code>.
     </p>
     <table>
-      <thead><tr><th>Regla</th><th>Valor inicial (a calibrar)</th></tr></thead>
+      <thead><tr><th>Regla</th><th>Valor inicial</th></tr></thead>
       <tbody>
-        <tr><td>Créditos de bienvenida / periódicos</td><td>10 PC al ser aprobado; 5 PC cada 28 días de actividad. Los créditos regalados vencen a los 60 días.</td></tr>
-        <tr><td>Ganancia del dueño de una GPU</td><td>Tarifa por hora según el modelo de GPU (p. ej. una RTX 4060 ≈ 1 PC/h); un nodo nuevo gana el 70 % y llega al 100 % a los 14 días si se mantiene disponible.</td></tr>
-        <tr><td>Reparto de cada pago</td><td>80 % al dueño del equipo, 10 % a la plataforma, 10 % se elimina del sistema.</td></tr>
-        <tr><td>Acreditación</td><td>Los créditos ganados se retienen 7 días (24 h en nodos verificados) para poder revertirlos si el nodo falla los controles.</td></tr>
-        <tr><td>Penalidades de reserva</td><td>Una reserva no usada o cancelada con menos de 2 horas de aviso pierde el 25 %.</td></tr>
-        <tr><td>Topes contra la colusión</td><td>Un usuario no puede hacer ganar más de 10 PC por semana a un mismo dueño; las cuentas de menos de 14 días no generan ganancia al dueño.</td></tr>
+        <tr><td>Bienvenida</td><td>10 PC al aprobar la cuenta, una sola vez</td></tr>
+        <tr><td>Asignación periódica</td><td>5 PC cada 28 días a cuentas activas</td></tr>
+        <tr><td>Vencimiento</td><td>Lo regalado vence a los 60 días (lotes FIFO); lo ganado no vence</td></tr>
+        <tr><td>Comisión</td><td>20 % en nodos de la comunidad y en el LLM; 15 % en nodos verificados. Mitad se quema, mitad va a plataforma</td></tr>
+        <tr><td>Medición</td><td>El dueño cobra solo el uso efectivo según DCGM; el inquilino paga el mayor entre ese uso y el 25 % de lo reservado</td></tr>
+        <tr><td>Retención</td><td>7 días en la comunidad, 24 h en verificados</td></tr>
+        <tr><td>No presentarse</td><td>25 % de lo bloqueado: mitad al dueño, mitad quemado. Aviso a los 15 min, cierre a los 30</td></tr>
+        <tr><td>Cancelar con menos de 2 h</td><td>25 %, quemado. Antes de eso, devolución completa</td></tr>
+        <tr><td>Contra identidades múltiples</td><td>Máximo 10 PC por semana de un mismo pagador a un mismo dueño; cuentas de menos de 14 días no generan ganancia al dueño; 7 días de antigüedad para sumar un nodo</td></tr>
+        <tr><td>Confiabilidad</td><td>Un nodo nuevo cobra el 70 % y llega al 100 % en 14 días según su uptime</td></tr>
+        <tr><td>Tarifas por GPU</td><td>RTX 4090: 2,0 · 3090: 1,6 · 4060: 1,0 · 3060: 0,9 PC/h · CPU: 0,1 PC/h</td></tr>
+        <tr><td>LLM</td><td>1,75 PC por millón de tokens de entrada · 7 PC por millón de salida · tope de 4.096 tokens por pedido</td></tr>
       </tbody>
     </table>
-    <p>La evaluación (H7) simula agentes honestos y grupos que se coluden para medir si estas reglas acotan el abuso sin desalentar a los aportantes honestos.</p>
-
-    <h3 id="aislamiento">5.7 Aislamiento y datos</h3>
-    <p>Todas las tablas de dominio llevan <code>usuario_id</code> y el aislamiento se fuerza en la base con
-      <a href="https://www.postgresql.org/docs/current/ddl-rowsecurity.html" target="_blank" rel="noopener">Row-Level Security</a>, no solo en la aplicación.
-      En el cluster, cada usuario tiene su <em>namespace</em> con:</p>
-    <ul>
-      <li>Contenedores sin privilegios según el perfil <em>restricted</em> de los <a href="https://kubernetes.io/docs/concepts/security/pod-security-standards/" target="_blank" rel="noopener">Pod Security Standards</a>.</li>
-      <li><a href="https://kubernetes.io/docs/concepts/policy/resource-quotas/" target="_blank" rel="noopener">Cuotas</a> de CPU, memoria, disco y GPU.</li>
-      <li><a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/" target="_blank" rel="noopener">Políticas de red</a> que impiden el tráfico entre <em>namespaces</em>; la salida a internet pasa solo por un proxy.</li>
-      <li>Reglas de admisión que rechazan pods privilegiados, montajes del host y cambios de etiquetas de confianza.</li>
-    </ul>
     <p>
-      <strong>Datos sensibles:</strong> en un nodo de la comunidad el dueño tiene acceso físico al equipo y, en principio, a la memoria de la carga.
-      Por eso un usuario puede marcar su trabajo como sensible y el planificador lo restringe a <strong>nodos propios</strong> de la plataforma
-      (restricción de afinidad), en lugar de prometer una confidencialidad que el MVP no puede garantizar.
+      <strong>Ejemplo:</strong> una reserva de 2 h en una RTX 3060 de la comunidad (0,9 PC/h) bloquea 1,8 PC. Si la GPU trabajó 1 h, se cobran 0,9 PC
+      y se devuelven 0,9. De lo cobrado, el 80 % (0,72 PC) va al dueño con 7 días de retención, multiplicado por su factor de confiabilidad;
+      el 10 % se quema y el 10 % va a la plataforma.
     </p>
+
+    <h3 id="seguridad">5.7 Seguridad y aislamiento</h3>
+    <table>
+      <thead><tr><th>Capa</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td>Identidad</td><td>Solo se confía en el JWT firmado de Cloudflare Access (RS256, audiencia y emisor), nunca en un header de mail plano.</td></tr>
+        <tr><td>Web</td><td>Cookie <code>__Host-</code> contra CSRF, rechazo de orígenes ajenos, token de un solo uso por acción de administrador, CSP sin JavaScript inline, límites por mail y por IP.</td></tr>
+        <tr><td>Pod Security</td><td>Perfil <a href="https://kubernetes.io/docs/concepts/security/pod-security-standards/" target="_blank" rel="noopener"><em>restricted</em></a> en los espacios de inquilinos, del portal y del proxy.</td></tr>
+        <tr><td>Admisión en CEL</td><td>Políticas <a href="https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/" target="_blank" rel="noopener">ValidatingAdmissionPolicy</a> y <a href="https://kubernetes.io/docs/reference/access-authn-authz/mutating-admission-policy/" target="_blank" rel="noopener">MutatingAdmissionPolicy</a>: inyectan pool, tolerancias y <code>securityContext</code>; rechazan <code>nodeName</code>, afinidades, tolerancias ajenas, host namespaces, <code>hostPath</code> y tokens eternos.</td></tr>
+        <tr><td>Cuotas</td><td>Por inquilino: 500m de CPU y 256 Mi de memoria en requests, 6 pods, 1 PVC, sin LoadBalancer; cuota de GPU en 0 fuera de su ventana.</td></tr>
+        <tr><td>Salida a internet</td><td>Solo DNS, el propio espacio y el proxy <a href="https://www.squid-cache.org/" target="_blank" rel="noopener">Squid</a> a 80/443 públicos; excepciones aprobadas una por una.</td></tr>
+        <tr><td>Metadata de la nube</td><td>Bloqueo de 169.254.169.254 en cada nodo de la nube.</td></tr>
+        <tr><td>API server</td><td><a href="https://kubernetes.io/docs/concepts/cluster-administration/flow-control/" target="_blank" rel="noopener">Prioridad y equidad (APF)</a> para que los inquilinos no saturen el control plane.</td></tr>
+        <tr><td>Acceso a la GPU</td><td>El NVIDIA Container Toolkit debe ignorar <code>NVIDIA_VISIBLE_DEVICES</code> en contenedores sin privilegios (versión 1.17.8 o mayor), para que un contenedor sin GPU asignada no pueda verla.</td></tr>
+        <tr><td>Privacidad del prompt</td><td>En nodos de la comunidad el dueño puede leer los prompts; el cliente lo prohíbe con el header <code>x-inferhive-private: true</code>.</td></tr>
+      </tbody>
+    </table>
 
     <h3 id="stack">5.8 Stack técnico</h3>
     <table>
-      <thead><tr><th>Capa</th><th>Tecnología</th><th>Nota</th></tr></thead>
+      <thead><tr><th>Capa</th><th>Tecnología</th></tr></thead>
       <tbody>
-        <tr><td>Control plane</td><td>FastAPI · uvicorn</td><td>Async, OpenAPI autogenerada</td></tr>
-        <tr><td>Persistencia</td><td>Postgres · SQLAlchemy · Alembic</td><td>Migraciones versionadas + <strong>RLS</strong> + libro de créditos</td></tr>
-        <tr><td>Autenticación</td><td><a href="https://openid.net/developers/how-connect-works/" target="_blank" rel="noopener">OIDC</a> · código por correo · llaves de API</td><td>Sin contraseñas</td></tr>
-        <tr><td>Frontend</td><td>React + Vite</td><td>Portal: calendario, sesiones, equipos, saldo</td></tr>
-        <tr><td>Cómputo</td><td><a href="https://docs.k3s.io/" target="_blank" rel="noopener">k3s</a> · Helm · NVIDIA device plugin</td><td>Cluster único con nodos propios y de la comunidad</td></tr>
-        <tr><td>Planificador</td><td>Go · Scheduling Framework · controlador de <code>GpuReservation</code></td><td>Comparado contra kube-scheduler y Kueue</td></tr>
-        <tr><td>Red</td><td>WireGuard (Tailscale / Headscale)</td><td>Sin puertos abiertos en la red del dueño</td></tr>
-        <tr><td>Medición</td><td>DCGM exporter · Prometheus · Grafana</td><td>Uso por carga y por nodo</td></tr>
-        <tr><td>Simulación</td><td>KWOK · trazas de Alibaba</td><td>Evaluación reproducible del planificador</td></tr>
-        <tr><td>CLI / SDK</td><td><code>inferhive</code> (Python)</td><td>Reservas, sesiones y descarga del <em>kubeconfig</em></td></tr>
+        <tr><td>Cluster</td><td>k3s (nodos en la nube + GPUs en casas)</td></tr>
+        <tr><td>Red</td><td>Tailscale (flannel sobre la interfaz de Tailscale, ACL por tags)</td></tr>
+        <tr><td>Entrada e identidad</td><td>Cloudflare Tunnel + Cloudflare Access (OTP por mail, JWT RS256)</td></tr>
+        <tr><td>Portal y API</td><td>FastAPI (<code>/api/v1</code>) · Postgres 17 con migraciones</td></tr>
+        <tr><td>LLM</td><td>Gateway compatible con OpenAI · <a href="https://docs.vllm.ai/" target="_blank" rel="noopener">vLLM</a> (p. ej. Qwen2.5-7B-Instruct-AWQ)</td></tr>
+        <tr><td>Orquestación de ventanas</td><td>Reconciliador como CronJob cada minuto</td></tr>
+        <tr><td>Alta de nodos</td><td>join-broker (tokens de k3s y llaves de Tailscale) · calificador (Jobs de benchmark y hardening)</td></tr>
+        <tr><td>Medición y monitoreo</td><td>dcgm-exporter · VictoriaMetrics · Loki · Grafana · vmalert · Alertmanager</td></tr>
+        <tr><td>Salida a internet</td><td>Squid</td></tr>
+        <tr><td>SDK y CLI</td><td><code>pip install inferhive</code>: saldo, historial, reservas, ofertas e instancias, kubeconfig, llaves y chat</td></tr>
       </tbody>
     </table>
 
-    <h3 id="metodologia">5.9 Metodología y benchmark</h3>
-    <p><strong>Diseño experimental:</strong></p>
+    <h3 id="metodologia">5.9 Metodología</h3>
+    <table>
+      <thead><tr><th>Experimento</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td><strong>E2</strong> trazas</td><td>Reproduce reservas, pods y uso del LLM registrados en la base del portal contra la política de cesión, y exporta trazas anonimizadas.</td></tr>
+        <tr><td><strong>E3</strong> planificador</td><td>Compara el planificador de tres tiers con la política de cesión sobre las mismas trazas: utilización, reservas violadas e índice de Jain.</td></tr>
+        <tr><td><strong>E4</strong> interrupción</td><td>Mide el trabajo perdido por un fine-tuning QLoRA que cede la GPU y retoma desde <em>checkpoint</em>, con fallas inyectadas.</td></tr>
+        <tr><td><strong>E5</strong> medición</td><td>Simula hosts que inflan su medición y mide cuántos intentos detecta el cruce de pod, DCGM y jobs desafío, y su sobrecosto.</td></tr>
+        <tr><td><strong>E6</strong> economía</td><td>Simula la economía por semanas con distintas cantidades de usuarios, GPUs y semillas: utilización, demanda atendida, Gini y ganancia de un ataque con identidades múltiples.</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Validación física:</strong> sobre una GPU propia del tesista, que actúa como nodo de la comunidad, y el cluster de la Universidad Nacional de Luján.</p>
+    <p><strong>Amenazas a la validez</strong> (siguiendo Wohlin et al.):</p>
     <ul>
-      <li><em>Variable independiente:</em> planificador (InferHive vs. kube-scheduler con prioridades vs. Kueue) y política de desalojo (inmediato vs. con aviso y gracia).</li>
-      <li><em>Variables dependientes:</em> reservas violadas, utilización de GPU, GPU·h perdidas por desalojo, tiempo de liberación al regreso del dueño, espera en cola.</li>
-      <li><em>Variables controladas:</em> misma traza, mismo conjunto de nodos simulados, misma semilla de disponibilidad intermitente.</li>
-      <li><em>Repeticiones:</em> n suficientes para reportar mediana + IQR y tamaño de efecto, con tests no paramétricos.</li>
-      <li><em>Validación física:</em> el mismo experimento, a escala reducida, sobre una GPU propia del tesista, que actúa como nodo de la comunidad, y el cluster de la Universidad Nacional de Luján como nodos propios de la plataforma.</li>
-    </ul>
-    <p><strong>Amenazas a la validez</strong> (siguiendo Wohlin et al.), declaradas explícitamente:</p>
-    <ul>
-      <li><em>Interna:</em> el simulador puede no reflejar el cluster real; se calibra contra mediciones del cluster físico.</li>
-      <li><em>Externa:</em> la traza de Alibaba proviene de un datacenter, no de una comunidad; se discute qué generaliza y se varía la disponibilidad de los nodos.</li>
-      <li><em>De constructo:</em> "utilización" depende de cómo se mida (asignación vs. uso real de la GPU); se reportan ambas.</li>
-      <li><em>De conclusión:</em> los nodos deshonestos inyectados siguen estrategias conocidas; un atacante adaptativo podría evadirlos, y se declara como límite.</li>
+      <li><em>Externa:</em> las trazas provienen de un solo cluster docente; se discute qué generaliza.</li>
+      <li><em>De constructo:</em> medir sin hardware de confianza es un problema abierto; E5 acota el fraude, no lo elimina.</li>
+      <li><em>De conclusión:</em> los resultados de E6 son de simulación, no mediciones.</li>
+      <li><em>Interna:</em> el operador concentra roles (dueño del nodo verificado, titular de plataforma y del backend LLM); se declara como sesgo.</li>
     </ul>
 
     <hr>
 
     <!-- ===================== 6. ESCALADO ===================== -->
     <h2 id="escalado">6. Camino de escalado a la Versión Completa</h2>
-    <p>
-      El MVP se diseña para que cada capacidad de la Versión Completa tenga una <strong>"puerta" ya prevista</strong>: nada de lo que sigue
-      requiere reescribir el control plane, el planificador ni el libro de créditos, solo <em>agregar</em>.
-    </p>
     <table>
-      <thead><tr><th>Extensión (Versión Completa)</th><th>Puerta ya prevista en el MVP</th></tr></thead>
+      <thead><tr><th>Extensión</th><th>Qué agrega</th></tr></thead>
       <tbody>
-        <tr><td>API de inferencia compatible con OpenAI</td><td>Un <em>gateway</em> que cuenta tokens y cobra contra el mismo libro; los modelos se sirven como una carga más del planificador.</td></tr>
-        <tr><td>Workers en PC, Mac, navegador y Android</td><td>Un tipo de proveedor que no se une al cluster y pide tareas por HTTPS; reutiliza el libro y la verificación por tareas.</td></tr>
-        <tr><td>Tareas canario y re-ejecución de inferencia</td><td>La infraestructura de sondas del MVP ya ejecuta tareas con resultado conocido y en nodos de otro dueño.</td></tr>
-        <tr><td>Servidor MCP para agentes de IA</td><td>Expone la misma API REST que usan el portal y la CLI.</td></tr>
-        <tr><td>Más plantillas (vLLM, ComfyUI)</td><td>Las plantillas son imágenes de contenedor parametrizadas; agregar una es agregar una fila al catálogo.</td></tr>
-        <tr><td>Predicción de disponibilidad de nodos</td><td>El planificador ya registra el historial de disponibilidad de cada nodo de la comunidad.</td></tr>
-        <tr><td>Tarifas dinámicas y reputación</td><td>Las tarifas son parámetros del libro, no constantes en el código.</td></tr>
-        <tr><td>Varios clusters / regiones</td><td>El control plane ya separa usuarios y equipos del cluster que los aloja.</td></tr>
+        <tr><td>Workers tier B</td><td>Cualquier dispositivo sirve inferencia sin unirse al cluster: CLI con llama.cpp, pestaña del navegador con WebLLM sobre WebGPU y Android con Termux, solo enchufado. Toman tareas con <em>long-poll</em> y un <em>lease</em> de 60 s, con modelos GGUF de hash fijo.</td></tr>
+        <tr><td>Verificación de tier B</td><td>10 % de canarios y 5 % de re-ejecución en otro dueño con 85 % de acuerdo; un canario fallido manda al worker a cuarentena.</td></tr>
+        <tr><td>LLM en GPUs de la comunidad</td><td>Que el gateway también rutee a nodos de la comunidad, decidiendo qué modelo sirve cada uno.</td></tr>
+        <tr><td>Servidor MCP</td><td>Agentes de IA que consultan saldo, reservan, alquilan y llaman al LLM sobre el SDK, con confirmación para las acciones que escriben.</td></tr>
+        <tr><td>Aislamiento más fuerte</td><td>gVisor o Kata para contenedores con imágenes de terceros.</td></tr>
+        <tr><td>Verificación avanzada</td><td>Huellas de inferencia tipo TOPLOC y métricas firmadas.</td></tr>
+        <tr><td>Partición de modelos</td><td>Repartir un modelo entre hogares, solo si no entra en ninguna GPU ni a 4 bits.</td></tr>
       </tbody>
     </table>
-    <blockquote>
-      <p>La tesis <strong>afirma y verifica</strong>, revisando el esquema y la API, que ninguna de estas extensiones exige reescribir el núcleo:
-      el MVP es un subconjunto coherente y operable de la Versión Completa, no un prototipo descartable.</p>
-    </blockquote>
 
     <hr>
 
@@ -1126,17 +1142,15 @@ img {
     <h2 id="bibliografia">7. Bibliografía</h2>
     <ol>
       <li><strong>Petrocelli, D. M.</strong> (2021). <em>Plataforma colaborativa, distribuida, escalable y de bajo costo basada en microservicios, contenedores, dispositivos móviles y servicios en la Nube para tareas de cómputo intensivo</em>. Tesis doctoral, Facultad de Informática, UNLP. <a href="https://doi.org/10.35537/10915/122360" target="_blank" rel="noopener">doi.org/10.35537/10915/122360</a></li>
-      <li><strong>Sarmenta, L. F. G.</strong> (2002). <em>Sabotage-tolerance mechanisms for volunteer computing systems</em>. Future Generation Computer Systems, 18(4). <a href="https://doi.org/10.1016/S0167-739X(01)00077-2" target="_blank" rel="noopener">doi.org/10.1016/S0167-739X(01)00077-2</a></li>
-      <li><strong>Crosby, S. A.; Wallach, D. S.</strong> (2009). <em>Efficient Data Structures for Tamper-Evident Logging</em>. USENIX Security Symposium. <a href="https://www.usenix.org/conference/usenixsecurity09/technical-sessions/presentation/efficient-data-structures-tamper-evident" target="_blank" rel="noopener">usenix.org</a></li>
-      <li><strong>Weng, Q. et al.</strong> (2022). <em>MLaaS in the Wild: Workload Analysis and Scheduling in Large-Scale Heterogeneous GPU Clusters</em>. NSDI '22. <a href="https://www.usenix.org/conference/nsdi22/presentation/weng" target="_blank" rel="noopener">usenix.org</a> · traza: <a href="https://github.com/alibaba/clusterdata" target="_blank" rel="noopener">github.com/alibaba/clusterdata</a></li>
+      <li><strong>Borzunov, A. et al.</strong> (2023). <em>Petals: Collaborative Inference and Fine-tuning of Large Models</em>. ACL 2023 (System Demonstrations). <a href="https://doi.org/10.18653/v1/2023.acl-demo.54" target="_blank" rel="noopener">doi.org/10.18653/v1/2023.acl-demo.54</a></li>
+      <li><strong>Andrade, N.; Cirne, W.; Brasileiro, F.; Roisenberg, P.</strong> (2003). <em>OurGrid: An Approach to Easily Assemble Grids with Equitable Resource Sharing</em>. JSSPP, LNCS. <a href="https://doi.org/10.1007/10968987_4" target="_blank" rel="noopener">doi.org/10.1007/10968987_4</a></li>
+      <li><strong>Ong, J. M. et al.</strong> (2025). <em>TOPLOC: A Locality Sensitive Hashing Scheme for Trustless Verifiable Inference</em>. ICML 2025, PMLR 267. <a href="https://proceedings.mlr.press/v267/ong25a.html" target="_blank" rel="noopener">proceedings.mlr.press</a></li>
+      <li><strong>Dettmers, T. et al.</strong> (2023). <em>QLoRA: Efficient Finetuning of Quantized LLMs</em>. NeurIPS 36. <a href="https://arxiv.org/abs/2305.14314" target="_blank" rel="noopener">arxiv.org/abs/2305.14314</a></li>
+      <li><strong>Jain, R.; Chiu, D.; Hawe, W.</strong> (1984). <em>A Quantitative Measure of Fairness and Discrimination for Resource Allocation in Shared Computer Systems</em>. DEC-TR-301. <a href="https://arxiv.org/abs/cs/9809099" target="_blank" rel="noopener">arxiv.org/abs/cs/9809099</a></li>
       <li><strong>Krawczyk, H.; Bellare, M.; Canetti, R.</strong> (1997). <em>HMAC: Keyed-Hashing for Message Authentication</em>. RFC 2104. <a href="https://www.rfc-editor.org/rfc/rfc2104" target="_blank" rel="noopener">rfc-editor.org</a></li>
-      <li><strong>Kubernetes Authors.</strong> <em>Scheduling Framework</em> y <em>Pod Priority and Preemption</em>. <a href="https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/" target="_blank" rel="noopener">kubernetes.io/docs</a></li>
-      <li><strong>Kubernetes SIGs.</strong> <em>Kueue</em> y <em>KWOK</em>. <a href="https://kueue.sigs.k8s.io/" target="_blank" rel="noopener">kueue.sigs.k8s.io</a> · <a href="https://kwok.sigs.k8s.io/" target="_blank" rel="noopener">kwok.sigs.k8s.io</a></li>
-      <li><strong>NVIDIA.</strong> <em>KAI Scheduler</em>, <em>k8s-device-plugin</em> y <em>dcgm-exporter</em>. <a href="https://github.com/NVIDIA/KAI-Scheduler" target="_blank" rel="noopener">github.com/NVIDIA</a></li>
-      <li><strong>Tailscale / Headscale.</strong> <em>What is Tailscale?</em> y servidor de control libre. <a href="https://tailscale.com/kb/1151/what-is-tailscale" target="_blank" rel="noopener">tailscale.com</a> · <a href="https://github.com/juanfont/headscale" target="_blank" rel="noopener">github.com/juanfont/headscale</a></li>
-      <li><strong>BOINC</strong> y <strong>AI Horde</strong> (antecedentes de cómputo voluntario con créditos). <a href="https://boinc.berkeley.edu/" target="_blank" rel="noopener">boinc.berkeley.edu</a> · <a href="https://aihorde.net/mission" target="_blank" rel="noopener">aihorde.net</a></li>
-      <li><strong>PostgreSQL Global Development Group.</strong> <em>Row Security Policies</em>. <a href="https://www.postgresql.org/docs/current/ddl-rowsecurity.html" target="_blank" rel="noopener">postgresql.org/docs</a></li>
       <li><strong>Wohlin, C. et al.</strong> (2012). <em>Experimentation in Software Engineering</em>. Springer. <a href="https://doi.org/10.1007/978-3-642-29044-2" target="_blank" rel="noopener">doi.org/10.1007/978-3-642-29044-2</a></li>
+      <li><strong>AI Horde</strong>, <strong>BOINC</strong>, <strong>vast.ai</strong>, <strong>RunPod</strong>, <strong>Kueue</strong>, <strong>Volcano</strong>, <strong>HAMi</strong>, <strong>NRP Nautilus</strong> y <strong>Chameleon</strong>: sitios oficiales enlazados en la sección 4.2.</li>
+      <li><strong>Documentación técnica:</strong> <a href="https://docs.k3s.io/" target="_blank" rel="noopener">k3s</a> · <a href="https://tailscale.com/kb/1151/what-is-tailscale" target="_blank" rel="noopener">Tailscale</a> · <a href="https://developers.cloudflare.com/cloudflare-one/" target="_blank" rel="noopener">Cloudflare Zero Trust</a> · <a href="https://docs.vllm.ai/" target="_blank" rel="noopener">vLLM</a> · <a href="https://github.com/NVIDIA/dcgm-exporter" target="_blank" rel="noopener">dcgm-exporter</a> · <a href="https://kubernetes.io/docs/concepts/security/pod-security-standards/" target="_blank" rel="noopener">Pod Security Standards</a> · <a href="https://www.postgresql.org/docs/current/" target="_blank" rel="noopener">PostgreSQL</a></li>
     </ol>
 
   </article>
