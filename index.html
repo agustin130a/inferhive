@@ -518,77 +518,10 @@ img {
 .arc-edge { stroke: var(--brand); stroke-width: 1.6; fill: none; }
 .arc-head { fill: var(--brand); }
 
-/* ============ GANTT ============ */
-.gantt-wrap { overflow-x: auto; margin: 20px 0 8px; }
-.gantt {
-    display: grid;
-    grid-template-columns: 230px repeat(6, minmax(64px, 1fr));
-    grid-auto-rows: 34px;
-    min-width: 640px;
-    row-gap: 6px;
-    align-items: stretch;
-    font-size: 13px;
-}
-.gantt .g-corner { grid-column: 1; }
-.gantt .g-month {
-    text-align: center;
-    font-weight: 700;
-    color: var(--brand-deep);
-    background: var(--brand-soft);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-}
-.gantt .g-label {
-    grid-column: 1;
-    display: flex;
-    align-items: center;
-    padding-right: 12px;
-    font-weight: 600;
-    color: var(--dark-gray);
-    font-size: 12.5px;
-    line-height: 1.25;
-}
-.gantt .g-track {
-    grid-column: 2 / 8;
-    border-radius: 4px;
-    background:
-        repeating-linear-gradient(
-            to right,
-            transparent 0,
-            transparent calc(100% / 6 - 1px),
-            var(--light-gray) calc(100% / 6 - 1px),
-            var(--light-gray) calc(100% / 6)
-        );
-}
-.gantt .g-bar {
-    align-self: center;
-    height: 22px;
-    border-radius: 6px;
-    color: #fff;
-    font-size: 11px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    padding: 0 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.bar-research { background: linear-gradient(90deg, #2E0F58, #6029A8); }
-.bar-zk       { background: linear-gradient(90deg, #6029A8, #7E3FBF); }
-.bar-plane    { background: linear-gradient(90deg, #7E3FBF, #9A5DD6); }
-.bar-k8s      { background: linear-gradient(90deg, #1B998B, #2BB3A3); }
-.bar-sched    { background: linear-gradient(90deg, #6029A8, #7E3FBF); }
-.bar-trust    { background: linear-gradient(90deg, #B5179E, #D6469E); }
-.bar-front    { background: linear-gradient(90deg, #B5179E, #D6469E); }
-.bar-write    { background: linear-gradient(90deg, #C2710C, #F4B400); }
-.gantt-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; margin: 12px 0 4px; color: var(--gray); }
-.gantt-legend span { display: inline-flex; align-items: center; gap: 6px; }
-.gantt-legend i { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+/* ============ FIGURAS ============ */
+.figure { margin: 20px 0 8px; overflow-x: auto; }
+.figure img { display: block; max-width: 100%; height: auto; background: #fff; border: 1px solid var(--light-gray); border-radius: 8px; padding: 8px; }
+.figure figcaption { font-size: 12.5px; color: var(--gray); margin-top: 8px; }
 
 </style>
 </head>
@@ -649,7 +582,7 @@ img {
   </aside>
 
   <article class="content">
-    <h1>InferHive: préstamo federado de GPUs de consumo para cargas de LLM — planificación consciente de VRAM y de reservas, tolerancia a interrupciones y economía de créditos con medición verificable</h1>
+    <h1>InferHive: préstamo colaborativo de GPU de consumo para cargas de LLM con planificación por reservas y créditos de uso verificable</h1>
     <p class="doc-subtitle">
       <strong>Propuesta de Trabajo Final de Grado</strong> · Ingeniería en Computación · FCEFyN, Universidad Nacional de Córdoba.<br>
       Tesista: Alex A. Hernando · Director: Dr. David Petrocelli · Co-director: Ing. Danilo Paez · 2026 · MVP realizable en 6 meses.
@@ -660,20 +593,22 @@ img {
     <p>
       <strong>InferHive</strong> es una plataforma donde una comunidad presta GPUs de consumo para cargas de LLM. Un único cluster
       <strong>k3s on-premise</strong>, alojado en el laboratorio LICDIA, suma GPUs ubicadas en casas, conectadas por una red privada sin puertos
-      abiertos. Quien usa la plataforma (alumnos, investigadores) llama a un LLM con una API compatible con OpenAI, alquila una GPU
-      al momento, reserva una franja o trabaja con <code>kubectl</code> en un espacio propio. Quien presta una GPU cobra por el uso medido.
+      abiertos. Quien usa la plataforma (alumnos, investigadores) accede a LLM de un catálogo mediante una API compatible con OpenAI, de tres
+      maneras: una API compartida que se paga por token, el alquiler al momento de una GPU con un modelo dedicado o la reserva de una franja horaria.
+      Quien presta una GPU cobra por el uso medido.
     </p>
     <p>
       Todo se paga con <strong>processing coins (PC)</strong>: un crédito de cómputo <strong>sin valor monetario</strong> que no se compra ni cotiza,
       registrado en un libro <em>append-only</em>, encadenado y firmado. La tesis plantea construir la plataforma desde cero y centra la
-      investigación en un <strong>planificador con tres tiers</strong> (reserva exclusiva, inferencia compartida e interrumpible) que conozca la
-      VRAM, las franjas reservadas y el regreso del dueño. Como líneas secundarias estudia la <strong>medición verificable</strong> frente a un dueño
+      investigación en un <strong>planificador con tres tiers</strong> (reserva exclusiva, inferencia compartida e inferencia por lotes interrumpible)
+      que asigne modelos a GPU según la VRAM que requieren y considere las franjas reservadas y el regreso del dueño. Como líneas secundarias estudia la <strong>medición verificable</strong> frente a un dueño
       deshonesto y la <strong>equidad de la economía de créditos</strong>.
     </p>
     <p>
       La propuesta continúa el trabajo futuro de la tesis doctoral del director (UNLP, 2021). El MVP se realiza en
       <strong>seis meses</strong>, con el primero dedicado a investigación, y se evalúa con hipótesis falsables sobre utilización, reservas violadas,
-      equidad, trabajo perdido por interrupciones y detección de mediciones infladas.
+      equidad, trabajo perdido por interrupciones y detección de mediciones infladas. La tesis abarca únicamente la
+      <strong>inferencia de LLM a través de la API</strong>; las cargas genéricas en contenedores quedan para la Versión Completa.
     </p>
 
     <hr>
@@ -681,69 +616,13 @@ img {
     <!-- ===================== 2. GANTT ===================== -->
     <h2 id="gantt">2. Diagrama Gantt (6 meses)</h2>
     <p>
-      Planificación de alto nivel por área de trabajo. El detalle de hitos y entregables está en el <a href="#cronograma">cronograma</a>.
+      Planificación por semana, con fases, tareas e hitos de control con el director. El detalle de hitos y entregables está en el <a href="#cronograma">cronograma</a>.
     </p>
 
-    <div class="gantt-legend">
-      <span><i class="bar-research"></i> Investigación / diseño</span>
-      <span><i class="bar-plane"></i> Plataforma base</span>
-      <span><i class="bar-k8s"></i> Cluster y nodos</span>
-      <span><i class="bar-sched"></i> Planificador</span>
-      <span><i class="bar-trust"></i> Medición + créditos</span>
-      <span><i class="bar-write"></i> Experimentos + escritura</span>
-    </div>
-
-    <div class="gantt-wrap">
-      <div class="gantt" role="img" aria-label="Diagrama de Gantt de 6 meses del MVP de InferHive">
-        <div class="g-corner"></div>
-        <div class="g-month" style="grid-column:2">M1</div>
-        <div class="g-month" style="grid-column:3">M2</div>
-        <div class="g-month" style="grid-column:4">M3</div>
-        <div class="g-month" style="grid-column:5">M4</div>
-        <div class="g-month" style="grid-column:6">M5</div>
-        <div class="g-month" style="grid-column:7">M6</div>
-
-        <div class="g-label">Investigación y estado del arte</div>
-        <div class="g-track"></div>
-        <div class="g-bar bar-research" style="grid-column:2 / 3">Estado del arte</div>
-
-        <div class="g-label">Diseño de arquitectura y modelo de datos</div>
-        <div class="g-track"></div>
-        <div class="g-bar bar-research" style="grid-column:2 / 4">Diseño + API</div>
-
-        <div class="g-label">Cluster k3s on-premise, red y acceso</div>
-        <div class="g-track"></div>
-        <div class="g-bar bar-k8s" style="grid-column:3 / 4">k3s · Tailscale · Cloudflare</div>
-
-        <div class="g-label">Portal, gateway LLM y ledger</div>
-        <div class="g-track"></div>
-        <div class="g-bar bar-plane" style="grid-column:3 / 5">Portal · llmgw · vLLM · ledger</div>
-
-        <div class="g-label">Reservas, alquiler y kubectl</div>
-        <div class="g-track"></div>
-        <div class="g-bar bar-plane" style="grid-column:4 / 5">Reconciliador · proxy · cuotas</div>
-
-        <div class="g-label">Alta de GPUs de la comunidad</div>
-        <div class="g-track"></div>
-        <div class="g-bar bar-k8s" style="grid-column:4 / 6">join-broker · calificador</div>
-
-        <div class="g-label">Planificador de tres tiers</div>
-        <div class="g-track"></div>
-        <div class="g-bar bar-sched" style="grid-column:4 / 7">Trazas · planificador · interrupción</div>
-
-        <div class="g-label">Medición verificable y economía</div>
-        <div class="g-track"></div>
-        <div class="g-bar bar-trust" style="grid-column:5 / 7">DCGM cruzado · simulación</div>
-
-        <div class="g-label">Experimentos, amenazas y escritura</div>
-        <div class="g-track"></div>
-        <div class="g-bar bar-write" style="grid-column:6 / 8">Experimentos · tesis · defensa</div>
-
-        <div class="g-label">Documentación (transversal)</div>
-        <div class="g-track"></div>
-        <div class="g-bar bar-write" style="grid-column:3 / 8; opacity:.55">Bitácora y runbook</div>
-      </div>
-    </div>
+    <figure class="figure">
+      <img src="gantt-inferhive.png" alt="Diagrama de Gantt de 24 semanas del MVP de InferHive, con fases, tareas e hitos de control" loading="lazy">
+      <figcaption>Fuente editable: <a href="gantt-inferhive.drawio">gantt-inferhive.drawio</a> · <a href="gantt-inferhive.xlsx">gantt-inferhive.xlsx</a></figcaption>
+    </figure>
 
     <hr>
 
@@ -769,18 +648,18 @@ img {
         </tr>
         <tr>
           <td><strong>M3</strong></td>
-          <td>LLM + reservas + alquiler + kubectl</td>
-          <td>Gateway compatible con OpenAI que cuenta tokens y liquida; vLLM interrumpible; reservas y alquiler con reconciliador y proxy autenticado; espacio por usuario con cuotas, Pod Security <em>restricted</em> y admisión en CEL.</td>
+          <td>API de LLM + alquiler + reservas</td>
+          <td>Gateway compatible con OpenAI que cuenta tokens y liquida; vLLM compartido que cede la GPU; alquiler y reservas como endpoints vLLM dedicados, orquestados por el reconciliador; catálogo de modelos cuantizados.</td>
         </tr>
         <tr>
           <td><strong>M4</strong></td>
           <td>GPUs de la comunidad + trazas</td>
-          <td>Alta con código de un solo uso, cuarentena y calificación; cobro por uso medido con DCGM y retención; exportación de trazas anonimizadas de reservas, pods y uso del LLM.</td>
+          <td>Alta con código de un solo uso, cuarentena y calificación; cobro por uso medido con DCGM y retención; exportación de trazas anonimizadas de reservas, alquileres, lotes y uso del LLM.</td>
         </tr>
         <tr>
           <td><strong>M5</strong></td>
           <td>Planificador + medición verificable</td>
-          <td>Planificador de tres tiers que conoce VRAM, franjas y regreso del dueño, comparado contra la política de cesión del reconciliador; tier interrumpible con <em>checkpoint</em>; cruce de pod, DCGM y jobs desafío.</td>
+          <td>Planificador de tres tiers que asigna modelos según su VRAM y considera franjas y regreso del dueño, comparado contra la política de cesión del reconciliador; inferencia por lotes interrumpible que retoma desde el último pedido completado; cruce de pod, DCGM y jobs desafío.</td>
         </tr>
         <tr>
           <td><strong>M6</strong></td>
@@ -806,7 +685,7 @@ img {
     </p>
     <ol>
       <li><strong>Planificación.</strong> Las GPUs son heterogéneas en VRAM e intermitentes, porque su dueño puede volver a usarlas. Además conviven
-        cargas con exigencias distintas: una reserva exclusiva, un LLM compartido que debe ceder la GPU y trabajos que se pueden interrumpir.
+        cargas con exigencias distintas: una reserva exclusiva, un LLM compartido que debe ceder la GPU y lotes de inferencia que se pueden interrumpir.
         Los planificadores de Kubernetes para GPU no resuelven reservas por calendario ni contabilidad de uso.</li>
       <li><strong>Medición.</strong> El dueño de un nodo es root en su máquina y puede falsear las métricas con las que cobra. Medir sin hardware
         de confianza es un problema abierto.</li>
@@ -828,12 +707,12 @@ img {
       <tbody>
         <tr><td>Clasificador inteligente de tareas y nodos</td><td>Planificador que conoce VRAM, tipo de carga, franjas y regreso del dueño (línea principal).</td></tr>
         <tr><td>Modelo de incentivos basado en créditos</td><td>Processing coins sobre un ledger <em>append-only</em>, encadenado y firmado.</td></tr>
-        <tr><td>Nuevas tareas de cómputo intensivo</td><td>Inferencia de LLM y cargas genéricas en contenedores.</td></tr>
-        <tr><td>Nodos heterogéneos con fallas</td><td>Tier interrumpible con <em>checkpoint</em>; workers con <em>lease</em> y reintento en la Versión Completa.</td></tr>
+        <tr><td>Nuevas tareas de cómputo intensivo</td><td>Inferencia de LLM; las cargas genéricas en contenedores quedan para la Versión Completa.</td></tr>
+        <tr><td>Nodos heterogéneos con fallas</td><td>Inferencia por lotes interrumpible que retoma desde el último pedido; workers con <em>lease</em> y reintento en la Versión Completa.</td></tr>
         <tr><td>Video en vivo, H.265 y H.266</td><td>Fuera de alcance.</td></tr>
       </tbody>
     </table>
-    <p>Lo nuevo respecto de 2021 es la <strong>seguridad multiinquilino</strong>. Otros trabajos relacionados:</p>
+    <p>Lo nuevo respecto de 2021 es la <strong>planificación por reservas consciente de la VRAM de cada modelo</strong> y la <strong>medición verificable del uso</strong>. Otros trabajos relacionados:</p>
     <table>
       <thead><tr><th>Proyecto</th><th>Qué hace</th><th>Diferencia con InferHive</th></tr></thead>
       <tbody>
@@ -844,21 +723,21 @@ img {
         <tr><td><a href="https://doi.org/10.1007/10968987_4" target="_blank" rel="noopener">OurGrid</a></td><td>Grid de favores en Brasil.</td><td>Antecedente latinoamericano sin ledger de uso medido.</td></tr>
         <tr><td><a href="https://kueue.sigs.k8s.io/" target="_blank" rel="noopener">Kueue</a> · <a href="https://volcano.sh/" target="_blank" rel="noopener">Volcano</a> · <a href="https://github.com/Project-HAMi/HAMi" target="_blank" rel="noopener">HAMi</a></td><td>Planificación y particionado de GPU en Kubernetes.</td><td>Ninguno resuelve reservas por calendario ni contabilidad de uso.</td></tr>
         <tr><td><a href="https://nationalresearchplatform.org/" target="_blank" rel="noopener">NRP Nautilus</a> · <a href="https://www.chameleoncloud.org/" target="_blank" rel="noopener">Chameleon</a></td><td>Infraestructura académica con reservas.</td><td>Sin «ganar contribuyendo».</td></tr>
-        <tr><td><a href="https://proceedings.mlr.press/v267/ong25a.html" target="_blank" rel="noopener">TOPLOC</a></td><td>Huellas de inferencia para detectar cambio de modelo o de prompt.</td><td>Candidata para verificar el tier compartido.</td></tr>
+        <tr><td><a href="https://proceedings.mlr.press/v267/ong25a.html" target="_blank" rel="noopener">TOPLOC</a></td><td>Huellas de inferencia para detectar cambio de modelo o de prompt.</td><td>Candidata para verificar que un nodo corrió el modelo declarado.</td></tr>
       </tbody>
     </table>
 
     <h3 id="objetivos">4.3 Objetivos</h3>
     <p><strong>Objetivo general.</strong> Diseñar, implementar y evaluar un MVP de una plataforma de préstamo federado de GPUs de consumo
-      para cargas de LLM sobre un cluster k3s on-premise, con un planificador de tres tiers, medición verificable y una economía de créditos
-      sin valor monetario.</p>
+      para inferencia de LLM, expuesta mediante una API compatible con OpenAI, sobre un cluster k3s on-premise, con un planificador de tres tiers,
+      medición verificable y una economía de créditos sin valor monetario.</p>
     <p><strong>Objetivos específicos:</strong></p>
     <ol>
       <li>Construir un cluster <strong>k3s on-premise</strong> en LICDIA al que se sumen GPUs en casas, sin puertos abiertos.</li>
-      <li>Ofrecer cuatro <strong>formas de uso</strong>: API de LLM compatible con OpenAI, alquiler al momento, reservas por franja y <code>kubectl</code> en un espacio propio.</li>
+      <li>Exponer la inferencia de LLM mediante una <strong>API compatible con OpenAI</strong> en tres modalidades (API compartida, alquiler al momento y reserva por franja), sobre un catálogo de modelos cuantizados.</li>
       <li>Permitir que terceros <strong>sumen su GPU</strong> con cuarentena y calificación previas.</li>
-      <li>Diseñar e implementar un <strong>planificador de tres tiers</strong> que conozca VRAM, franjas y regreso del dueño, con tolerancia a interrupciones.</li>
-      <li>Implementar <strong>medición verificable</strong> del uso, cruzando fuentes independientes, con un modelo de amenaza del dueño deshonesto.</li>
+      <li>Diseñar e implementar un <strong>planificador de tres tiers</strong> que asigne modelos a GPU según la VRAM que requieren y considere franjas y regreso del dueño, con tolerancia a interrupciones.</li>
+      <li>Implementar <strong>medición verificable</strong> del uso, contando los tokens en el gateway y cruzándolos con fuentes independientes, con un modelo de amenaza del dueño deshonesto.</li>
       <li>Implementar la <strong>economía del PC</strong> sobre un libro encadenado y firmado, y analizar su equidad por simulación.</li>
       <li>Publicar un <strong>dataset abierto de trazas</strong> anonimizadas del cluster.</li>
     </ol>
@@ -866,24 +745,29 @@ img {
     <h3 id="contribucion">4.4 Contribuciones esperadas</h3>
     <ul>
       <li>Arquitectura de referencia de un cluster k3s on-premise extendido con GPUs en hogares.</li>
-      <li>Planificador con tres tiers: reserva exclusiva, inferencia compartida e interrumpible.</li>
-      <li>Tolerancia a interrupciones para cargas que ceden la GPU.</li>
+      <li>Planificador con tres tiers: reserva exclusiva, inferencia compartida e inferencia por lotes interrumpible.</li>
+      <li>Tolerancia a interrupciones para lotes de inferencia que ceden la GPU.</li>
       <li>La economía del PC con análisis de equidad.</li>
       <li>Medición verificable con modelo de amenaza del host deshonesto.</li>
       <li>Un dataset abierto de trazas de un cluster docente argentino.</li>
     </ul>
 
     <h3 id="alcance">4.5 Alcance: MVP vs Versión Completa</h3>
+    <p>
+      La tesis abarca únicamente la <strong>inferencia de LLM a través de la API</strong>. Quedan fuera de su alcance, como extensiones del proyecto,
+      la ejecución de cargas genéricas en contenedores (<code>kubectl</code>), el alquiler de CPU, el ajuste fino de modelos, los workers fuera del cluster
+      y el servidor MCP.
+    </p>
     <table>
       <thead>
         <tr><th>Dimensión</th><th>MVP (6 meses)</th><th>Versión Completa</th></tr>
       </thead>
       <tbody>
-        <tr><td>Formas de uso</td><td>API de LLM compatible con OpenAI, alquiler al momento, reservas por franja, <code>kubectl</code></td><td>+ Servidor MCP para agentes de IA</td></tr>
+        <tr><td>Formas de uso</td><td>API compatible con OpenAI: compartida por token, alquiler al momento y reserva por franja, sobre un catálogo de modelos cuantizados</td><td>+ <code>kubectl</code> y cargas genéricas en contenedores, ajuste fino, alquiler de CPU, servidor MCP para agentes de IA</td></tr>
         <tr><td>Quién presta</td><td>Tier A: GPU propia de la plataforma y GPUs de la comunidad unidas al cluster</td><td>+ Tier B: workers en cualquier dispositivo (CLI, navegador, Android)</td></tr>
         <tr><td>Planificador</td><td>Tres tiers, VRAM, franjas, regreso del dueño</td><td>+ Partición de modelos entre hogares</td></tr>
         <tr><td>Verificación</td><td>Cuarentena, calificación, cruce de pod, DCGM y jobs desafío</td><td>+ Canarios y re-ejecución en tier B, huellas tipo TOPLOC, métricas firmadas</td></tr>
-        <tr><td>Aislamiento</td><td>Pod Security <em>restricted</em>, admisión en CEL, cuotas, proxy de salida</td><td>+ gVisor o Kata para imágenes de terceros</td></tr>
+        <tr><td>Aislamiento</td><td>Los inquilinos no ejecutan código: solo acceden por la API. Pod Security <em>restricted</em>, admisión en CEL y proxy de salida protegen la plataforma</td><td>+ Cuotas por inquilino y gVisor o Kata para imágenes de terceros</td></tr>
         <tr><td>Economía</td><td>PC sin valor monetario, parámetros fijos</td><td>+ Reajuste de parámetros a partir de la simulación</td></tr>
       </tbody>
     </table>
@@ -896,7 +780,7 @@ img {
       </thead>
       <tbody>
         <tr><td><strong>RQ1.</strong> ¿Un planificador que conozca VRAM, franjas y regreso del dueño mejora utilización y espera?</td><td><strong>H1.</strong> Al menos 1,5 veces más utilización, 0 reservas violadas e índice de equidad de Jain ≥ 0,8.</td><td>E2 trazas · E3 planificador</td></tr>
-        <tr><td><strong>RQ2.</strong> ¿Cuánto cuesta un tier interrumpible con <em>checkpoint</em>?</td><td><strong>H2.</strong> Menos de 5 % de trabajo perdido en un fine-tuning QLoRA.</td><td>E4 interrupción</td></tr>
+        <tr><td><strong>RQ2.</strong> ¿Cuánto cuesta un tier de inferencia por lotes interrumpible?</td><td><strong>H2.</strong> Menos de 5 % de los pedidos de un lote se reprocesan al ceder la GPU ante una reserva.</td><td>E4 interrupción</td></tr>
         <tr><td><em>RQ3 (sec.).</em> ¿Cuánto puede inflar su medición un host deshonesto?</td><td><strong>H3.</strong> Cruzar pod, DCGM y jobs desafío detecta más del 95 % de los intentos, con menos de 3 % de sobrecosto.</td><td>E5 medición</td></tr>
         <tr><td><em>RQ4 (sec.).</em> ¿Un crédito por GPU-hora medida sostiene oferta y equidad?</td><td><strong>H4.</strong> Con asignación periódica, vencimiento y topes, la simulación mantiene utilización y demanda atendida, baja la concentración (Gini) y acota la ganancia de un ataque con identidades múltiples. Los umbrales se fijan en M1.</td><td>E6 economía</td></tr>
       </tbody>
@@ -911,7 +795,7 @@ img {
     <table>
       <thead><tr><th>Actor</th><th>Qué hace</th><th>Cómo entra</th><th>PC</th></tr></thead>
       <tbody>
-        <tr><td><strong>Inquilino</strong> (alumno, investigador)</td><td>Usa el LLM, alquila GPU o CPU, reserva franjas, trabaja con <code>kubectl</code></td><td>Código por mail (OTP) y aprobación del operador</td><td>Gasta. Recibe 10 PC de bienvenida y 5 cada 28 días</td></tr>
+        <tr><td><strong>Inquilino</strong> (alumno, investigador)</td><td>Usa la API compartida, alquila una GPU con un modelo dedicado, reserva franjas y envía lotes de inferencia</td><td>Código por mail (OTP) y aprobación del operador</td><td>Gasta. Recibe 10 PC de bienvenida y 5 cada 28 días</td></tr>
         <tr><td><strong>Dueño de GPU</strong> (tier A)</td><td>Suma su máquina como nodo k3s del cluster</td><td>Código de un solo uso (1 h) e instalador de una línea; cuenta con al menos 7 días</td><td>Cobra por uso medido, menos comisión, con retención</td></tr>
         <tr><td><strong>Operador</strong></td><td>Aprueba accesos, audita, opera el cluster</td><td>Identidad de administrador</td><td>La mitad de cada comisión va a la cuenta plataforma</td></tr>
       </tbody>
@@ -923,47 +807,12 @@ img {
       Los nodos hablan entre sí por <a href="https://tailscale.com/kb/1151/what-is-tailscale" target="_blank" rel="noopener">Tailscale</a>
       (flannel sobre la interfaz de Tailscale y ACL por tags), así que ninguna casa necesita puertos abiertos. Todo el tráfico de usuarios entra por un único
       <a href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/" target="_blank" rel="noopener">Cloudflare Tunnel</a>,
-      con <a href="https://developers.cloudflare.com/cloudflare-one/policies/access/" target="_blank" rel="noopener">Cloudflare Access</a> delante del portal y de la API de Kubernetes.
+      con <a href="https://developers.cloudflare.com/cloudflare-one/policies/access/" target="_blank" rel="noopener">Cloudflare Access</a> delante del portal. La API de LLM se autentica con llaves <code>pck_</code> y la API de Kubernetes queda solo para el operador.
     </p>
-    <div class="arch-diagram">
-      <svg viewBox="0 0 760 380" role="img" aria-label="Arquitectura de InferHive: entrada por Cloudflare, nodos on-premise en LICDIA y GPUs en casas unidos por Tailscale en un cluster k3s" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <marker id="arrow" markerWidth="10" markerHeight="10" refX="6.5" refY="3" orient="auto" markerUnits="strokeWidth">
-            <path d="M0,0 L7,3 L0,6 Z" class="arc-head"/>
-          </marker>
-        </defs>
-
-        <rect class="arc-box" x="60" y="14" width="640" height="92" rx="10"/>
-        <text class="arc-title" x="80" y="40">ENTRADA — Cloudflare</text>
-        <text class="arc-line"  x="80" y="64">Access: OTP por mail, JWT firmado · Tunnel: sin puertos abiertos</text>
-        <text class="arc-line"  x="80" y="86">portal (con Access) · API LLM (llave pck_) · API de k8s (con Access)</text>
-
-        <line class="arc-edge" x1="200" y1="106" x2="200" y2="152" marker-end="url(#arrow)"/>
-        <text class="arc-lbl" x="212" y="134">tunnel</text>
-
-        <rect class="arc-box" x="40" y="158" width="320" height="206" rx="10"/>
-        <text class="arc-title" x="60" y="184">NODOS ON-PREMISE — LICDIA</text>
-        <text class="arc-line"  x="60" y="210">Control plane de k3s</text>
-        <text class="arc-line"  x="60" y="232">Portal FastAPI · Postgres (ledger PC)</text>
-        <text class="arc-line"  x="60" y="254">Gateway LLM (cuenta tokens)</text>
-        <text class="arc-line"  x="60" y="276">Reconciliador · join-broker · calificador</text>
-        <text class="arc-line"  x="60" y="298">Squid (salida 80/443)</text>
-        <text class="arc-foot"  x="60" y="330"><tspan x="60">Liquida, autoriza y lleva</tspan><tspan x="60" dy="16">la cuenta de los créditos</tspan></text>
-
-        <rect class="arc-box" x="400" y="158" width="320" height="206" rx="10"/>
-        <text class="arc-title" x="420" y="184">GPUs EN CASAS (tier A)</text>
-        <text class="arc-line"  x="420" y="210">Nodo propio: vLLM interrumpible</text>
-        <text class="arc-line"  x="420" y="232">que cede la GPU a reservas</text>
-        <text class="arc-line"  x="420" y="254">Nodos de la comunidad:</text>
-        <text class="arc-line"  x="420" y="276">cuarentena → community</text>
-        <text class="arc-line"  x="420" y="298">dcgm-exporter en cada GPU</text>
-        <text class="arc-foot"  x="420" y="340">Sin puertos abiertos en la casa</text>
-
-        <line class="arc-edge" x1="360" y1="262" x2="400" y2="262" marker-end="url(#arrow)"/>
-        <line class="arc-edge" x1="400" y1="282" x2="360" y2="282" marker-end="url(#arrow)"/>
-        <text class="arc-lbl" x="380" y="254" text-anchor="middle">Tailscale</text>
-      </svg>
-    </div>
+    <figure class="figure">
+      <img src="arquitectura-inferhive.png" alt="Arquitectura de InferHive: actores, entrada por Cloudflare, cluster k3s en LICDIA y GPU en hogares unidos por Tailscale" loading="lazy">
+      <figcaption>Fuente editable: <a href="arquitectura-inferhive.drawio">arquitectura-inferhive.drawio</a></figcaption>
+    </figure>
 
     <h3 id="recorridos">5.3 Recorridos principales</h3>
     <p><strong>Una llamada al LLM</strong></p>
@@ -978,15 +827,21 @@ img {
     <ol>
       <li>El inquilino pide una franja (hasta 4 h, una por día) o alquila al momento; se bloquean horas × tarifa.</li>
       <li>Al abrirse la ventana, el reconciliador sube la cuota de GPU a 1 y apaga el vLLM 60 s antes.</li>
-      <li>Una política de admisión fija el pod al nodo con GPU y le pone un tiempo máximo de vida.</li>
-      <li>Si no hay pods a los 15 minutos, avisa; a los 30, cierra como <em>no-show</em>.</li>
+      <li>Levanta en esa GPU una instancia de vLLM dedicada con el modelo elegido del catálogo y la expone como un endpoint compatible con OpenAI, que el inquilino usa con su llave <code>pck_</code>.</li>
+      <li>Si no hay pedidos al endpoint a los 15 minutos, avisa; a los 30, cierra como <em>no-show</em>.</li>
       <li>Al cerrar, cobra el uso medido por DCGM con piso del 25 % y vuelve a levantar el vLLM.</li>
     </ol>
     <p>
-      El alquiler se hace desde un buscador de ofertas con tok/s medidos, uptime y próximo turno libre. Cada instancia se abre por un proxy
-      <code>/i/&lt;id&gt;/</code> autenticado y solo accesible para su dueño, con logs, extender y detener, y cobro por segundo con devolución automática.
-      Quien prefiere <code>kubectl</code> accede a la API de Kubernetes a través de Cloudflare Access, en un espacio propio con cuotas.
+      El alquiler se hace desde un buscador de ofertas con tok/s medidos, uptime y próximo turno libre. Cada instancia se puede extender o detener,
+      y se cobra por segundo con devolución automática.
     </p>
+    <p><strong>Un lote de inferencia</strong></p>
+    <ol>
+      <li>El inquilino sube un archivo de pedidos con el formato de la <a href="https://platform.openai.com/docs/guides/batch" target="_blank" rel="noopener">Batch API de OpenAI</a> y se bloquea el peor caso.</li>
+      <li>El planificador ejecuta el lote en los huecos libres de GPU, entre reservas.</li>
+      <li>Si se abre una reserva o vuelve el dueño, el lote cede la GPU; solo se reprocesan los pedidos en curso.</li>
+      <li>Al terminar, liquida por los tokens que contó el gateway.</li>
+    </ol>
     <p><strong>Un dueño suma su GPU</strong></p>
     <ol>
       <li>Acepta los términos y recibe un código de un solo uso que vence en 1 hora.</li>
@@ -1005,18 +860,18 @@ img {
     <ul>
       <li><strong>Reserva exclusiva:</strong> la franja reservada o alquilada es intocable (0 reservas violadas).</li>
       <li><strong>Inferencia compartida:</strong> el LLM aprovecha la GPU mientras no hay reserva y la cede a tiempo.</li>
-      <li><strong>Interrumpible:</strong> trabajos que pueden ceder la GPU y retomar desde un <em>checkpoint</em>, para llenar los huecos con poco trabajo perdido.</li>
+      <li><strong>Lotes interrumpibles:</strong> lotes de inferencia que ceden la GPU y retoman desde el último pedido completado, para llenar los huecos con poco trabajo perdido.</li>
     </ul>
     <p>
-      Además de los tiers, el planificador tiene en cuenta la VRAM de cada GPU, las franjas futuras y el <strong>regreso del dueño</strong> de un
+      Además de los tiers, el planificador asigna modelos a GPU según la VRAM que requiere cada modelo del catálogo, y tiene en cuenta las franjas futuras y el <strong>regreso del dueño</strong> de un
       nodo de la comunidad. Se compara contra la política de cesión usando trazas reales del cluster (E2), con tres métricas: utilización,
       reservas violadas y equidad (índice de Jain).
     </p>
 
     <h3 id="medicion">5.5 Medición y verificación</h3>
     <p>
-      El modelo de amenaza tiene dos frentes: un inquilino que intenta salirse de su espacio y el dueño de un nodo que es root en su
-      máquina. Frente al dueño, la plataforma mide por su cuenta:
+      Como los inquilinos solo acceden a los modelos a través de la API y no ejecutan código propio, el modelo de amenaza se centra en el
+      dueño de un nodo, que es root en su máquina. Frente a él, la plataforma mide por su cuenta:
     </p>
     <ul>
       <li><strong>Uso de GPU:</strong> el dueño cobra solo el uso efectivo según <a href="https://github.com/NVIDIA/dcgm-exporter" target="_blank" rel="noopener">DCGM</a>; sin métricas, no cobra.</li>
@@ -1055,7 +910,7 @@ img {
         <tr><td>Cancelar con menos de 2 h</td><td>25 %, quemado. Antes de eso, devolución completa</td></tr>
         <tr><td>Contra identidades múltiples</td><td>Máximo 10 PC por semana de un mismo pagador a un mismo dueño; cuentas de menos de 14 días no generan ganancia al dueño; 7 días de antigüedad para sumar un nodo</td></tr>
         <tr><td>Confiabilidad</td><td>Un nodo nuevo cobra el 70 % y llega al 100 % en 14 días según su uptime</td></tr>
-        <tr><td>Tarifas por GPU</td><td>RTX 4090: 2,0 · 3090: 1,6 · 4060: 1,0 · 3060: 0,9 PC/h · CPU: 0,1 PC/h</td></tr>
+        <tr><td>Tarifas por GPU</td><td>RTX 4090: 2,0 · 3090: 1,6 · 4060: 1,0 · 3060: 0,9 PC/h</td></tr>
         <tr><td>LLM</td><td>1,75 PC por millón de tokens de entrada · 7 PC por millón de salida · tope de 4.096 tokens por pedido</td></tr>
       </tbody>
     </table>
@@ -1071,11 +926,9 @@ img {
       <tbody>
         <tr><td>Identidad</td><td>Solo se confía en el JWT firmado de Cloudflare Access (RS256, audiencia y emisor), nunca en un header de mail plano.</td></tr>
         <tr><td>Web</td><td>Cookie <code>__Host-</code> contra CSRF, rechazo de orígenes ajenos, token de un solo uso por acción de administrador, CSP sin JavaScript inline, límites por mail y por IP.</td></tr>
-        <tr><td>Pod Security</td><td>Perfil <a href="https://kubernetes.io/docs/concepts/security/pod-security-standards/" target="_blank" rel="noopener"><em>restricted</em></a> en los espacios de inquilinos, del portal y del proxy.</td></tr>
-        <tr><td>Admisión en CEL</td><td>Políticas <a href="https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/" target="_blank" rel="noopener">ValidatingAdmissionPolicy</a> y <a href="https://kubernetes.io/docs/reference/access-authn-authz/mutating-admission-policy/" target="_blank" rel="noopener">MutatingAdmissionPolicy</a>: inyectan pool, tolerancias y <code>securityContext</code>; rechazan <code>nodeName</code>, afinidades, tolerancias ajenas, host namespaces, <code>hostPath</code> y tokens eternos.</td></tr>
-        <tr><td>Cuotas</td><td>Por inquilino: 500m de CPU y 256 Mi de memoria en requests, 6 pods, 1 PVC, sin LoadBalancer; cuota de GPU en 0 fuera de su ventana.</td></tr>
-        <tr><td>Salida a internet</td><td>Solo DNS, el propio espacio y el proxy <a href="https://www.squid-cache.org/" target="_blank" rel="noopener">Squid</a> a 80/443 públicos; excepciones aprobadas una por una.</td></tr>
-        <tr><td>API server</td><td><a href="https://kubernetes.io/docs/concepts/cluster-administration/flow-control/" target="_blank" rel="noopener">Prioridad y equidad (APF)</a> para que los inquilinos no saturen el control plane.</td></tr>
+        <tr><td>Pod Security</td><td>Perfil <a href="https://kubernetes.io/docs/concepts/security/pod-security-standards/" target="_blank" rel="noopener"><em>restricted</em></a> en los espacios de la plataforma (portal, gateway e instancias vLLM).</td></tr>
+        <tr><td>Admisión en CEL</td><td>Políticas <a href="https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/" target="_blank" rel="noopener">ValidatingAdmissionPolicy</a> y <a href="https://kubernetes.io/docs/reference/access-authn-authz/mutating-admission-policy/" target="_blank" rel="noopener">MutatingAdmissionPolicy</a>: en las instancias que crea la plataforma, inyectan pool, tolerancias y <code>securityContext</code>; rechazan <code>nodeName</code>, afinidades, tolerancias ajenas, host namespaces, <code>hostPath</code> y tokens eternos.</td></tr>
+        <tr><td>Salida a internet</td><td>Solo DNS, los servicios de la plataforma y el proxy <a href="https://www.squid-cache.org/" target="_blank" rel="noopener">Squid</a> a 80/443 públicos; excepciones aprobadas una por una.</td></tr>
         <tr><td>Acceso a la GPU</td><td>El NVIDIA Container Toolkit debe ignorar <code>NVIDIA_VISIBLE_DEVICES</code> en contenedores sin privilegios (versión 1.17.8 o mayor), para que un contenedor sin GPU asignada no pueda verla.</td></tr>
         <tr><td>Privacidad del prompt</td><td>En nodos de la comunidad el dueño puede leer los prompts; el cliente lo prohíbe con el header <code>x-inferhive-private: true</code>.</td></tr>
       </tbody>
@@ -1089,12 +942,13 @@ img {
         <tr><td>Red</td><td>Tailscale (flannel sobre la interfaz de Tailscale, ACL por tags)</td></tr>
         <tr><td>Entrada e identidad</td><td>Cloudflare Tunnel + Cloudflare Access (OTP por mail, JWT RS256)</td></tr>
         <tr><td>Portal y API</td><td>FastAPI (<code>/api/v1</code>) · Postgres 17 con migraciones</td></tr>
-        <tr><td>LLM</td><td>Gateway compatible con OpenAI · <a href="https://docs.vllm.ai/" target="_blank" rel="noopener">vLLM</a> (p. ej. Qwen2.5-7B-Instruct-AWQ)</td></tr>
+        <tr><td>LLM</td><td>Gateway compatible con OpenAI · <a href="https://docs.vllm.ai/" target="_blank" rel="noopener">vLLM</a> (p. ej. Qwen2.5-7B-Instruct-AWQ) · catálogo de modelos cuantizados</td></tr>
+        <tr><td>Lotes</td><td><code>/v1/batches</code> con el formato de la Batch API de OpenAI, ejecutados sobre vLLM</td></tr>
         <tr><td>Orquestación de ventanas</td><td>Reconciliador como CronJob cada minuto</td></tr>
         <tr><td>Alta de nodos</td><td>join-broker (tokens de k3s y llaves de Tailscale) · calificador (Jobs de benchmark y hardening)</td></tr>
         <tr><td>Medición y monitoreo</td><td>dcgm-exporter · VictoriaMetrics · Loki · Grafana · vmalert · Alertmanager</td></tr>
         <tr><td>Salida a internet</td><td>Squid</td></tr>
-        <tr><td>SDK y CLI</td><td><code>pip install inferhive</code>: saldo, historial, reservas, ofertas e instancias, kubeconfig, llaves y chat</td></tr>
+        <tr><td>SDK y CLI</td><td><code>pip install inferhive</code>: saldo, historial, reservas, ofertas e instancias, lotes, llaves y chat</td></tr>
       </tbody>
     </table>
 
@@ -1102,9 +956,9 @@ img {
     <table>
       <thead><tr><th>Experimento</th><th>Qué hace</th></tr></thead>
       <tbody>
-        <tr><td><strong>E2</strong> trazas</td><td>Reproduce reservas, pods y uso del LLM registrados en la base del portal contra la política de cesión, y exporta trazas anonimizadas.</td></tr>
+        <tr><td><strong>E2</strong> trazas</td><td>Reproduce reservas, alquileres, lotes y uso del LLM registrados en la base del portal contra la política de cesión, y exporta trazas anonimizadas.</td></tr>
         <tr><td><strong>E3</strong> planificador</td><td>Compara el planificador de tres tiers con la política de cesión sobre las mismas trazas: utilización, reservas violadas e índice de Jain.</td></tr>
-        <tr><td><strong>E4</strong> interrupción</td><td>Mide el trabajo perdido por un fine-tuning QLoRA que cede la GPU y retoma desde <em>checkpoint</em>, con fallas inyectadas.</td></tr>
+        <tr><td><strong>E4</strong> interrupción</td><td>Mide los pedidos reprocesados por un lote de inferencia que cede la GPU ante una reserva y retoma desde el último pedido completado, con interrupciones inyectadas.</td></tr>
         <tr><td><strong>E5</strong> medición</td><td>Simula hosts que inflan su medición y mide cuántos intentos detecta el cruce de pod, DCGM y jobs desafío, y su sobrecosto.</td></tr>
         <tr><td><strong>E6</strong> economía</td><td>Simula la economía por semanas con distintas cantidades de usuarios, GPUs y semillas: utilización, demanda atendida, Gini y ganancia de un ataque con identidades múltiples.</td></tr>
       </tbody>
@@ -1128,6 +982,8 @@ img {
         <tr><td>Workers tier B</td><td>Cualquier dispositivo sirve inferencia sin unirse al cluster: CLI con llama.cpp, pestaña del navegador con WebLLM sobre WebGPU y Android con Termux, solo enchufado. Toman tareas con <em>long-poll</em> y un <em>lease</em> de 60 s, con modelos GGUF de hash fijo.</td></tr>
         <tr><td>Verificación de tier B</td><td>10 % de canarios y 5 % de re-ejecución en otro dueño con 85 % de acuerdo; un canario fallido manda al worker a cuarentena.</td></tr>
         <tr><td>LLM en GPUs de la comunidad</td><td>Que el gateway también rutee a nodos de la comunidad, decidiendo qué modelo sirve cada uno.</td></tr>
+        <tr><td>Cargas genéricas</td><td><code>kubectl</code> en un espacio propio con cuotas por inquilino, alquiler de CPU y cobro por uso medido de CPU y memoria.</td></tr>
+        <tr><td>Ajuste fino</td><td>Ajuste fino con <a href="https://arxiv.org/abs/2305.14314" target="_blank" rel="noopener">QLoRA</a> como carga del tier interrumpible, con <em>checkpoint</em>.</td></tr>
         <tr><td>Servidor MCP</td><td>Agentes de IA que consultan saldo, reservan, alquilan y llaman al LLM sobre el SDK, con confirmación para las acciones que escriben.</td></tr>
         <tr><td>Aislamiento más fuerte</td><td>gVisor o Kata para contenedores con imágenes de terceros.</td></tr>
         <tr><td>Verificación avanzada</td><td>Huellas de inferencia tipo TOPLOC y métricas firmadas.</td></tr>
@@ -1144,12 +1000,11 @@ img {
       <li><strong>Borzunov, A. et al.</strong> (2023). <em>Petals: Collaborative Inference and Fine-tuning of Large Models</em>. ACL 2023 (System Demonstrations). <a href="https://doi.org/10.18653/v1/2023.acl-demo.54" target="_blank" rel="noopener">doi.org/10.18653/v1/2023.acl-demo.54</a></li>
       <li><strong>Andrade, N.; Cirne, W.; Brasileiro, F.; Roisenberg, P.</strong> (2003). <em>OurGrid: An Approach to Easily Assemble Grids with Equitable Resource Sharing</em>. JSSPP, LNCS. <a href="https://doi.org/10.1007/10968987_4" target="_blank" rel="noopener">doi.org/10.1007/10968987_4</a></li>
       <li><strong>Ong, J. M. et al.</strong> (2025). <em>TOPLOC: A Locality Sensitive Hashing Scheme for Trustless Verifiable Inference</em>. ICML 2025, PMLR 267. <a href="https://proceedings.mlr.press/v267/ong25a.html" target="_blank" rel="noopener">proceedings.mlr.press</a></li>
-      <li><strong>Dettmers, T. et al.</strong> (2023). <em>QLoRA: Efficient Finetuning of Quantized LLMs</em>. NeurIPS 36. <a href="https://arxiv.org/abs/2305.14314" target="_blank" rel="noopener">arxiv.org/abs/2305.14314</a></li>
       <li><strong>Jain, R.; Chiu, D.; Hawe, W.</strong> (1984). <em>A Quantitative Measure of Fairness and Discrimination for Resource Allocation in Shared Computer Systems</em>. DEC-TR-301. <a href="https://arxiv.org/abs/cs/9809099" target="_blank" rel="noopener">arxiv.org/abs/cs/9809099</a></li>
       <li><strong>Krawczyk, H.; Bellare, M.; Canetti, R.</strong> (1997). <em>HMAC: Keyed-Hashing for Message Authentication</em>. RFC 2104. <a href="https://www.rfc-editor.org/rfc/rfc2104" target="_blank" rel="noopener">rfc-editor.org</a></li>
       <li><strong>Wohlin, C. et al.</strong> (2012). <em>Experimentation in Software Engineering</em>. Springer. <a href="https://doi.org/10.1007/978-3-642-29044-2" target="_blank" rel="noopener">doi.org/10.1007/978-3-642-29044-2</a></li>
       <li><strong>AI Horde</strong>, <strong>BOINC</strong>, <strong>vast.ai</strong>, <strong>RunPod</strong>, <strong>Kueue</strong>, <strong>Volcano</strong>, <strong>HAMi</strong>, <strong>NRP Nautilus</strong> y <strong>Chameleon</strong>: sitios oficiales enlazados en la sección 4.2.</li>
-      <li><strong>Documentación técnica:</strong> <a href="https://docs.k3s.io/" target="_blank" rel="noopener">k3s</a> · <a href="https://tailscale.com/kb/1151/what-is-tailscale" target="_blank" rel="noopener">Tailscale</a> · <a href="https://developers.cloudflare.com/cloudflare-one/" target="_blank" rel="noopener">Cloudflare Zero Trust</a> · <a href="https://docs.vllm.ai/" target="_blank" rel="noopener">vLLM</a> · <a href="https://github.com/NVIDIA/dcgm-exporter" target="_blank" rel="noopener">dcgm-exporter</a> · <a href="https://kubernetes.io/docs/concepts/security/pod-security-standards/" target="_blank" rel="noopener">Pod Security Standards</a> · <a href="https://www.postgresql.org/docs/current/" target="_blank" rel="noopener">PostgreSQL</a></li>
+      <li><strong>Documentación técnica:</strong> <a href="https://docs.k3s.io/" target="_blank" rel="noopener">k3s</a> · <a href="https://tailscale.com/kb/1151/what-is-tailscale" target="_blank" rel="noopener">Tailscale</a> · <a href="https://developers.cloudflare.com/cloudflare-one/" target="_blank" rel="noopener">Cloudflare Zero Trust</a> · <a href="https://docs.vllm.ai/" target="_blank" rel="noopener">vLLM</a> · <a href="https://platform.openai.com/docs/guides/batch" target="_blank" rel="noopener">Batch API de OpenAI</a> · <a href="https://github.com/NVIDIA/dcgm-exporter" target="_blank" rel="noopener">dcgm-exporter</a> · <a href="https://kubernetes.io/docs/concepts/security/pod-security-standards/" target="_blank" rel="noopener">Pod Security Standards</a> · <a href="https://www.postgresql.org/docs/current/" target="_blank" rel="noopener">PostgreSQL</a></li>
     </ol>
 
   </article>

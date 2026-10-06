@@ -1,6 +1,6 @@
 # InferHive — Propuesta de Tesis
 
-Préstamo federado de GPUs de consumo para cargas de LLM: planificación consciente de VRAM y de reservas, tolerancia a interrupciones y economía de créditos con medición verificable.
+Préstamo colaborativo de GPU de consumo para cargas de LLM con planificación por reservas y créditos de uso verificable.
 
 🌐 **Sitio publicado:** [https://agustin130a.github.io/inferhive/](https://agustin130a.github.io/inferhive/)
 
