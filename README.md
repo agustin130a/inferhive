@@ -12,4 +12,10 @@ Préstamo colaborativo de GPU de consumo para cargas de LLM con planificación p
 
 ---
 
-*Octubre 2026 · Versión 1.*
+## Contenido
+
+- `index.html`: anexo de la propuesta y diagramas (sitio publicado).
+- `arquitectura-inferhive.drawio` / `.png`: diagrama de arquitectura.
+- `gantt-inferhive.drawio` / `.png` / `.xlsx`: diagrama de Gantt (24 semanas).
+
+*Octubre 2026 · Versión 2.*
